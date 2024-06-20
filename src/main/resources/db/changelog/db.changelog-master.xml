@@ -7,5 +7,6 @@
 
     <include file="db/changelog/changeset/account-table.xml"/>
     <include file="db/changelog/changeset/transaction-table.xml"/>
+    <include file="db/changelog/changeset/user-table.xml"/>
 
 </databaseChangeLog>

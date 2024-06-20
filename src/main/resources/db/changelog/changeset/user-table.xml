@@ -5,24 +5,32 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="2024-06-19-21-01" author="NikRom5531">
-        <createTable tableName="account">
+    <changeSet id="2024-06-20-19-54" author="NikRom5531">
+        <createTable tableName="users">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="account_number" type="VARCHAR(255)">
+            <column name="unique_number" type="VARCHAR(255)">
                 <constraints nullable="false" unique="true"/>
             </column>
-            <column name="balance" type="DECIMAL(19,2)">
+            <column name="last_name" type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="currency" type="VARCHAR(3)">
+            <column name="first_name" type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="owner_unique_number" type="VARCHAR(255)">
+            <column name="patronymic_name" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="birth_date" type="VARCHAR(10)">
                 <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="phone_number" type="VARCHAR(255)">
+                <constraints nullable="true"/>
             </column>
         </createTable>
     </changeSet>
-
 </databaseChangeLog>
