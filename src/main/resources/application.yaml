@@ -12,6 +12,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
+
 server:
   port: 8082
 
@@ -21,3 +22,14 @@ feign:
       default:
         connectTimeout: 5000
         readTimeout: 5000
+
+currency:
+  converter:
+    service:
+      url: localhost:8083
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
