@@ -6,17 +6,21 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
-import java.math.BigDecimal;
-
+/**
+ * Сущность представляет собой банковский счет пользователя.
+ */
 @Getter
 @Setter
 @Entity
+@ToString
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String accountNumber;
-    private BigDecimal balance;
+    private double balance;
     private String currency;
+    private String ownerUniqueNumber;
 }
