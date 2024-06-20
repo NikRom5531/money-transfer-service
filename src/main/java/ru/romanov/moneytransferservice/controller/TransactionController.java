@@ -1,6 +1,6 @@
 package ru.romanov.moneytransferservice.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,20 +10,56 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.romanov.moneytransferservice.model.entity.Transaction;
 import ru.romanov.moneytransferservice.service.TransactionService;
 
-import java.math.BigDecimal;
-
+/**
+ * Контроллер для управления транзакциями.
+ */
 @RestController
-@RequestMapping("/transactions")
+@RequestMapping("/api/transactions")
+@AllArgsConstructor
 public class TransactionController {
-    @Autowired
     private TransactionService transactionService;
 
-    @PostMapping
+    /**
+     * Выполняет перевод денег между счетами.
+     *
+     * @param fromAccount Номер счёта, с которого производится перевод
+     * @param toAccount Номер счёта, на который производится перевод
+     * @param amount Сумма перевода
+     * @return ResponseEntity с созданной транзакцией или кодом ошибки
+     */
+    @PostMapping("/transfer")
     public ResponseEntity<Transaction> transferMoney(@RequestParam String fromAccount,
                                                      @RequestParam String toAccount,
-                                                     @RequestParam BigDecimal amount) {
-        Transaction transaction = transactionService.transferMoney(fromAccount, toAccount, amount);
-        return ResponseEntity.status(HttpStatus.CREATED).body(transaction);
+                                                     @RequestParam double amount) {
+        if ((fromAccount == null && toAccount == null) || amount <= 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        else if (fromAccount != null && toAccount != null) if (fromAccount.equals(toAccount)) return new ResponseEntity<>(HttpStatus.CONFLICT);
+        return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.transferMoney(fromAccount, toAccount, amount));
+    }
+
+    /**
+     * Выполняет зачисление денег на счёт.
+     *
+     * @param toAccount Номер счёта, на который производится зачисление
+     * @param amount Сумма зачисления
+     * @return ResponseEntity с созданной транзакцией
+     */
+    @PostMapping("/deposit")
+    public ResponseEntity<Transaction> depositMoney(@RequestParam String toAccount,
+                                                    @RequestParam double amount) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.depositMoney(toAccount, amount));
+    }
+
+    /**
+     * Выполняет списание денег со счёта.
+     *
+     * @param fromAccount Номер счёта, с которого производится списание
+     * @param amount Сумма списания
+     * @return ResponseEntity с созданной транзакцией
+     */
+    @PostMapping("/debit")
+    public ResponseEntity<Transaction> debitMoney(@RequestParam String fromAccount,
+                                                  @RequestParam double amount) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.debitMoney(fromAccount, amount));
     }
 }
 
