@@ -1,28 +1,26 @@
 package ru.romanov.moneytransferservice.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import ru.romanov.moneytransferservice.exception.AccountNotFoundException;
+import ru.romanov.moneytransferservice.enums.TypeTransactionEnum;
 import ru.romanov.moneytransferservice.model.entity.Account;
-import ru.romanov.moneytransferservice.repository.AccountRepository;
 
-@Service
-public class AccountService {
-    @Autowired
-    private AccountRepository accountRepository;
+import java.util.List;
+import java.util.Map;
 
-    public Account createAccount(Account account) {
-        return accountRepository.save(account);
-    }
+/**
+ * Интерфейс сервиса для работы со счетами пользователей.
+ */
+public interface AccountService {
+    Account createAccount(String currency, String userIdNumber);
 
-    public Account getAccountById(Long id) {
-        return accountRepository.findById(id)
-                .orElseThrow(() -> new AccountNotFoundException("Account not found"));
-    }
+    Account getAccountByAccountNumber(String accountNumber);
 
-    public Account getAccountByAccountNumber(String accountNumber) {
-        return accountRepository.findByAccountNumber(accountNumber)
-                .orElseThrow(() -> new AccountNotFoundException("Account not found"));
-    }
+    void updateAccountBalance(String accountNumber, TypeTransactionEnum type, double balance);
+
+    Map<String, String> getSupportedCurrencyMap();
+
+    List<Account> getAccounts();
+
+    void checkBalance(String accountNumber, double amount);
+
+    void deleteAccount(String accountNumber);
 }
-

@@ -1,46 +1,17 @@
 package ru.romanov.moneytransferservice.service;
 
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import ru.romanov.moneytransferservice.exception.InsufficientFundsException;
-import ru.romanov.moneytransferservice.model.entity.Account;
+import ru.romanov.moneytransferservice.enums.TypeTransactionEnum;
 import ru.romanov.moneytransferservice.model.entity.Transaction;
-import ru.romanov.moneytransferservice.repository.TransactionRepository;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+/**
+ * Интерфейс сервиса для выполнения транзакций между счетами.
+ */
+public interface TransactionService {
+    Transaction createTransaction(String fromAccountNumber, String toAccountNumber, TypeTransactionEnum type, double amount, String currencyCode);
 
-@Service
-public class TransactionService {
-    @Autowired
-    private TransactionRepository transactionRepository;
+    Transaction transferMoney(String fromAccountNumber, String toAccountNumber, double amount);
 
-    @Autowired
-    private AccountService accountService;
+    Transaction depositMoney(String toAccountNumber, double amount);
 
-    @Transactional
-    public Transaction transferMoney(String fromAccountNumber, String toAccountNumber, BigDecimal amount) {
-        Account fromAccount = accountService.getAccountByAccountNumber(fromAccountNumber);
-        Account toAccount = accountService.getAccountByAccountNumber(toAccountNumber);
-
-        if (fromAccount.getBalance().compareTo(amount) < 0) {
-            throw new InsufficientFundsException("Insufficient funds");
-        }
-
-        fromAccount.setBalance(fromAccount.getBalance().subtract(amount));
-        toAccount.setBalance(toAccount.getBalance().add(amount));
-
-        Transaction transaction = new Transaction();
-        transaction.setFromAccountId(fromAccount.getId());
-        transaction.setToAccountId(toAccount.getId());
-        transaction.setAmount(amount);
-        transaction.setTransactionDate(LocalDateTime.now());
-
-        transactionRepository.save(transaction);
-        accountService.createAccount(fromAccount); // Update account balance
-        accountService.createAccount(toAccount); // Update account balance
-
-        return transaction;
-    }
+    Transaction debitMoney(String fromAccount, double amount);
 }
