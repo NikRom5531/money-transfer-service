@@ -8,31 +8,31 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Репозиторий для работы с сущностью Account, предоставляющий методы для доступа к базе данных.
+ * Репозиторий для работы с сущностью {@link Account}, предоставляющий методы для доступа к базе данных.
  */
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
     /**
      * Проверяет существование счета с указанным номером.
      *
-     * @param accountNumber Номер счета
-     * @return true, если счет существует, иначе false
+     * @param accountNumber Номер счета.
+     * @return {@code true}, если счет существует, иначе {@code false}.
      */
     boolean existsByAccountNumber(String accountNumber);
 
     /**
      * Находит счет по его номеру.
      *
-     * @param accountNumber Номер счета
-     * @return Optional с найденным счетом, или Optional.empty(), если счет не найден
+     * @param accountNumber Номер счета.
+     * @return {@link Optional} с найденным счетом, или {@code Optional.empty()}, если счет не найден.
      */
     Optional<Account> findByAccountNumber(String accountNumber);
 
     /**
      * Находит все счета, принадлежащие владельцу с указанным уникальным номером.
      *
-     * @param ownerUniqueNumber Уникальный номер владельца счетов
-     * @return Список счетов, принадлежащих указанному владельцу
+     * @param ownerUniqueNumber Уникальный номер владельца счетов.
+     * @return Список счетов, принадлежащих указанному владельцу.
      */
     List<Account> findByOwnerUniqueNumber(String ownerUniqueNumber);
 }

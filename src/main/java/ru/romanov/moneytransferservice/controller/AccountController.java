@@ -33,9 +33,9 @@ public class AccountController {
     /**
      * Создает новый счёт.
      *
-     * @param currency Код валюты
-     * @param ownerUniqueNumber Уникальный номер владельца
-     * @return ResponseEntity с созданным счётом или кодом ошибки
+     * @param currency          Код валюты.
+     * @param ownerUniqueNumber Уникальный номер владельца.
+     * @return {@link ResponseEntity} с созданным счётом или кодом ошибки.
      */
     @PostMapping
     public ResponseEntity<Account> createAccount(@RequestParam String currency, @RequestParam String ownerUniqueNumber) {
@@ -51,7 +51,7 @@ public class AccountController {
     /**
      * Возвращает список всех счетов.
      *
-     * @return ResponseEntity со списком счетов или кодом ошибки
+     * @return {@link ResponseEntity} со списком счетов или кодом ошибки.
      */
     @GetMapping
     public ResponseEntity<List<Account>> getAccounts() {
@@ -66,7 +66,7 @@ public class AccountController {
     /**
      * Возвращает карту поддерживаемых валют.
      *
-     * @return ResponseEntity с картой поддерживаемых валют
+     * @return {@link ResponseEntity} с картой поддерживаемых валют.
      */
     @GetMapping("/supported-currency-map")
     public ResponseEntity<Map<String, String>> getSupportedCurrencyMap() {
@@ -74,10 +74,10 @@ public class AccountController {
     }
 
     /**
-     * Возвращает информацию об аккаунте по номеру счёта.
+     * Возвращает информацию о счёте по его номеру.
      *
-     * @param account_number Номер счёта
-     * @return ResponseEntity с информацией о счёте или кодом ошибки
+     * @param account_number Номер счёта.
+     * @return {@link ResponseEntity} с информацией о счёте или кодом ошибки.
      */
     @GetMapping("/{account_number}")
     public ResponseEntity<Account> getAccount(@PathVariable String account_number) {
@@ -92,8 +92,8 @@ public class AccountController {
     /**
      * Удаляет счёт по его номеру.
      *
-     * @param account_number Номер счёта
-     * @return ResponseEntity с сообщением об успешном удалении или кодом ошибки
+     * @param account_number Номер счёта.
+     * @return {@link ResponseEntity} с сообщением об успешном удалении или кодом ошибки.
      */
     @DeleteMapping("/{account_number}")
     public ResponseEntity<String> deleteAccount(@PathVariable String account_number) {

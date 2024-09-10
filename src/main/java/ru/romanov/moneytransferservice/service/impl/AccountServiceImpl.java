@@ -34,15 +34,6 @@ public class AccountServiceImpl implements AccountService {
     private final UserRepository userRepository;
     private final CurrencyConverterClient currencyConverterClient;
 
-    /**
-     * Создает новый счёт для пользователя.
-     *
-     * @param currency                      Валюта счёта
-     * @param userUniqueNumber              Уникальный номер пользователя
-     * @return                              Созданный счёт
-     * @throws UserNotFoundException        если пользователь не найден
-     * @throws CodeNotSupportedException    если указанная валюта не поддерживается
-     */
     @Override
     public Account createAccount(String currency, String userUniqueNumber) {
         Account account = new Account();
@@ -54,44 +45,25 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.save(account);
     }
 
-    /**
-     * Возвращает счёт по его номеру.
-     *
-     * @param accountNumber             Номер счёта
-     * @return                          Найденный счёт
-     * @throws AccountNotFoundException если счёт не найден
-     */
     @Override
     public Account getAccountByAccountNumber(String accountNumber) {
         return accountRepository.findByAccountNumber(accountNumber).orElseThrow(AccountNotFoundException::new);
     }
 
-    /**
-     * Обновляет баланс счёта в зависимости от типа транзакции.
-     *
-     * @param accountNumber Номер счёта
-     * @param type          Тип транзакции (дебет или кредит)
-     * @param balance       Сумма для обновления баланса
-     */
     @Override
-    public void updateAccountBalance(String accountNumber, TypeTransactionEnum type, double balance) {
+    public void updateAccountBalance(String accountNumber, TypeTransactionEnum type, double amount) {
         Account account = getAccountByAccountNumber(accountNumber);
         double accountBalance = account.getBalance();
         switch (type) {
-            case DEPOSIT -> account.setBalance(accountBalance + balance);
+            case DEPOSIT -> account.setBalance(accountBalance + amount);
             case DEBIT -> {
-                checkBalance(accountNumber, balance);
-                account.setBalance(accountBalance - balance);
+                checkBalance(account.getBalance(), amount);
+                account.setBalance(accountBalance - amount);
             }
         }
         accountRepository.save(account);
     }
 
-    /**
-     * Удаляет счёт по его номеру.
-     *
-     * @param accountNumber Номер счёта
-     */
     @Override
     @Transactional
     public void deleteAccount(String accountNumber) {
@@ -111,32 +83,28 @@ public class AccountServiceImpl implements AccountService {
         log.info("Delete account. Account number: {}", account.getAccountNumber());
     }
 
-    /**
-     * Возвращает список всех счетов.
-     *
-     * @return Список всех счетов
-     */
     @Override
     public List<Account> getAccounts() {
         return accountRepository.findAll();
     }
 
-    /**
-     * Возвращает карту поддерживаемых валют.
-     *
-     * @return Карта поддерживаемых валют
-     */
     @Override
     public Map<String, String> getSupportedCurrencyMap() {
         return currencyConverterClient.supportedCurrencyMap();
     }
 
+    @Override
+    public void checkBalance(double accountBalance, double amount) {
+        if (accountBalance - amount < 0)
+            throw new InsufficientFundsException();
+    }
+
     /**
      * Проверка: поддерживается ли указанный код валюты.
      *
-     * @param code Код валюты
-     * @return Код валюты в верхнем регистре
-     * @throws CodeNotSupportedException если указанный код валюты не поддерживается
+     * @param code Код валюты.
+     * @return Код валюты в верхнем регистре.
+     * @throws CodeNotSupportedException Если указанный код валюты не поддерживается.
      */
     private String checkSupportedCode(String code) {
         if (!getSupportedCurrencyMap().containsKey(code.toUpperCase())) throw new CodeNotSupportedException();
@@ -146,7 +114,7 @@ public class AccountServiceImpl implements AccountService {
     /**
      * Генерирует уникальный номер счёта.
      *
-     * @return Уникальный номер счёта
+     * @return Уникальный номер счёта.
      */
     private String generateUniqueNumber() {
         int blocks = 4;
@@ -155,25 +123,10 @@ public class AccountServiceImpl implements AccountService {
         do {
             accountNumber = new StringBuilder();
             for (int i = 0; i < blocks; i++)
-                accountNumber.append(UUID.randomUUID()
-                                .toString()
-                                .toUpperCase()
+                accountNumber.append(UUID.randomUUID().toString().toUpperCase()
                                 .replace("-", "/"), 0, lengthBlock)
                         .append((i == blocks - 1 ? "" : "-"));
         } while (accountRepository.existsByAccountNumber(accountNumber.toString()));
         return accountNumber.toString();
     }
-
-    /**
-     * Проверяет достаточность средств на счёте.
-     *
-     * @param accountNumber Номер счёта
-     * @param amount        Сумма для проверки
-     * @throws InsufficientFundsException если на счёте недостаточно средств
-     */
-    public void checkBalance(String accountNumber, double amount) {
-        if (getAccountByAccountNumber(accountNumber).getBalance() - amount < 0)
-            throw new InsufficientFundsException();
-    }
 }
-

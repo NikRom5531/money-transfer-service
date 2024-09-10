@@ -20,9 +20,9 @@ import java.util.Collections;
 public class CurrencyConverterConfiguration {
 
     /**
-     * Создает и возвращает бин Retryer для настройки повторных попыток в Feign клиенте.
+     * Создает и возвращает бин {@link Retryer} для настройки повторных попыток в Feign клиенте.
      *
-     * @return объект Retryer для настройки повторных попыток
+     * @return Объект {@link Retryer} для настройки повторных попыток.
      */
     @Bean
     public Retryer retryer() {
@@ -30,9 +30,9 @@ public class CurrencyConverterConfiguration {
     }
 
     /**
-     * Создает и возвращает бин ErrorDecoder для обработки ошибок в Feign клиенте.
+     * Создает и возвращает бин {@link ErrorDecoder} для обработки ошибок в Feign клиенте.
      *
-     * @return объект ErrorDecoder для обработки ошибок
+     * @return Объект {@link ErrorDecoder} для обработки ошибок.
      */
     @Bean
     public ErrorDecoder errorDecoder() {
@@ -40,10 +40,10 @@ public class CurrencyConverterConfiguration {
     }
 
     /**
-     * Создает и возвращает бин Decoder для декодирования ответов в Feign клиенте.
+     * Создает и возвращает бин {@link Decoder} для декодирования ответов в Feign клиенте.
      *
      * @param messageConverters фабрика для создания конвертеров HTTP сообщений
-     * @return объект Decoder для декодирования ответов
+     * @return Объект {@link Decoder} для декодирования ответов.
      */
     @Bean
     public Decoder feignDecoder(ObjectFactory<HttpMessageConverters> messageConverters) {
@@ -51,7 +51,7 @@ public class CurrencyConverterConfiguration {
     }
 
     /**
-     * Внутренний класс, расширяющий MappingJackson2HttpMessageConverter для поддержки дополнительных типов медиа.
+     * Внутренний класс, расширяющий {@link MappingJackson2HttpMessageConverter} для поддержки дополнительных типов медиа.
      */
     static class FeignHttpMessageConverter extends MappingJackson2HttpMessageConverter {
         /**

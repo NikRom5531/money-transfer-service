@@ -14,12 +14,12 @@ public class RetryableErrorDecoder implements ErrorDecoder {
     /**
      * Метод для декодирования ошибки, возвращаемой сервером.
      * Если статус ответа равен 429 (Too Many Requests) или >= 500 (ошибки сервера),
-     * генерируется RetryableException для повторной попытки запроса.
+     * генерируется {@link RetryableException} для повторной попытки запроса.
      * В противном случае используется стандартный декодер ошибок.
      *
-     * @param methodKey ключ метода Feign клиента
-     * @param response ответ сервера
-     * @return исключение, которое будет выброшено
+     * @param methodKey Ключ метода Feign клиента.
+     * @param response  Ответ сервера.
+     * @return Исключение, которое будет выброшено.
      */
     @Override
     public Exception decode(String methodKey, Response response) {

@@ -1,11 +1,11 @@
 package ru.romanov.moneytransferservice.enums;
 
 /**
- * Перечисление для типов транзакций.
+ * Перечисление для типов транзакций:
  * <ul>
- *     <li>TRANSFER - перевод средств между счетами</li>
- *     <li>DEPOSIT - зачисление средств на счет</li>
- *     <li>DEBIT - списание средств со счета</li>
+ *     <li>TRANSFER - Перевод средств между счетами.</li>
+ *     <li>DEPOSIT - Зачисление средств на счет.</li>
+ *     <li>DEBIT - Списание средств со счета.</li>
  * </ul>
  */
 public enum TypeTransactionEnum {

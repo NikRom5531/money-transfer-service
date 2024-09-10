@@ -33,19 +33,25 @@ public class UserController {
     /**
      * Создает нового пользователя.
      *
-     * @param userDTO данные нового пользователя
-     * @return ResponseEntity с созданным пользователем или кодом ошибки
+     * @param userDTO Данные нового пользователя.
+     * @return {@link ResponseEntity} с созданным пользователем или кодом ошибки.
      */
     @PostMapping
     public ResponseEntity<User> createUser(@Valid @RequestBody UserDto userDTO) {
         if (!validationService.isUserDtoValidated(userDTO)) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDTO.getLastName(), userDTO.getFirstName(), userDTO.getPatronymicName(), userDTO.getBirthDate(), userDTO.getEmail(), userDTO.getPhoneNumber()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(
+                userDTO.getLastName(),
+                userDTO.getFirstName(),
+                userDTO.getPatronymicName(),
+                userDTO.getBirthDate(),
+                userDTO.getEmail(),
+                userDTO.getPhoneNumber()));
     }
 
     /**
      * Возвращает список всех пользователей.
      *
-     * @return ResponseEntity со списком пользователей
+     * @return {@link ResponseEntity} со списком пользователей.
      */
     @GetMapping
     public ResponseEntity<List<User>> getUsers() {
@@ -55,8 +61,8 @@ public class UserController {
     /**
      * Возвращает пользователя по его идентификатору.
      *
-     * @param id идентификатор пользователя
-     * @return ResponseEntity с пользователем или кодом ошибки, если пользователь не найден
+     * @param id Идентификатор пользователя.
+     * @return {@link ResponseEntity} с пользователем или кодом ошибки, если пользователь не найден.
      */
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable long id) {
@@ -66,8 +72,8 @@ public class UserController {
     /**
      * Возвращает пользователя по его уникальному номеру.
      *
-     * @param uniqueNumber уникальный номер пользователя
-     * @return ResponseEntity с пользователем или кодом ошибки, если пользователь не найден
+     * @param uniqueNumber Уникальный номер пользователя.
+     * @return {@link ResponseEntity} с пользователем или кодом ошибки, если пользователь не найден.
      */
     @GetMapping("/unique/{uniqueNumber}")
     public ResponseEntity<User> getUser(@PathVariable String uniqueNumber) {
@@ -77,8 +83,8 @@ public class UserController {
     /**
      * Удаляет пользователя по его идентификатору.
      *
-     * @param id идентификатор пользователя
-     * @return ResponseEntity с сообщением об успешном удалении пользователя
+     * @param id Идентификатор пользователя.
+     * @return {@link ResponseEntity} с сообщением об успешном удалении пользователя.
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable long id) {

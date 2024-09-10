@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Реализация интерфейса Retryer для Feign клиента с настраиваемыми интервалами повторных попыток.
+ * Реализация интерфейса {@link Retryer} для Feign клиента с настраиваемыми интервалами повторных попыток.
  * Интервалы задаются в зависимости от статуса HTTP ошибки.
  */
 @Slf4j
@@ -29,9 +29,10 @@ public class FeignIntervalRetryer implements Retryer {
     }
 
     /**
-     * Метод для продолжения повторных попыток или проброса исключения RetryableException.
+     * Метод для продолжения повторных попыток или проброса исключения {@link RetryableException}.
      * Определяет интервал ожидания между попытками в зависимости от статуса HTTP ошибки.
-     * @param e RetryableException, возникшее во время предыдущей попытки выполнения запроса
+     *
+     * @param e {@link RetryableException}, возникшее во время предыдущей попытки выполнения запроса.
      */
     @Override
     public void continueOrPropagate(RetryableException e) {
@@ -54,8 +55,9 @@ public class FeignIntervalRetryer implements Retryer {
     }
 
     /**
-     * Метод для клонирования текущего экземпляра Retryer.
-     * @return Новый экземпляр FeignIntervalRetryer
+     * Метод для клонирования текущего экземпляра {@link Retryer}.
+     *
+     * @return Новый экземпляр {@link FeignIntervalRetryer}.
      */
     @Override
     public Retryer clone() {

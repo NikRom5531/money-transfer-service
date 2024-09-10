@@ -22,26 +22,28 @@ public class TransactionController {
     /**
      * Выполняет перевод денег между счетами.
      *
-     * @param fromAccount Номер счёта, с которого производится перевод
-     * @param toAccount Номер счёта, на который производится перевод
-     * @param amount Сумма перевода
-     * @return ResponseEntity с созданной транзакцией или кодом ошибки
+     * @param fromAccount Номер счёта, с которого производится перевод.
+     * @param toAccount   Номер счёта, на который производится перевод.
+     * @param amount      Сумма перевода.
+     * @return {@link ResponseEntity} с созданной транзакцией или кодом ошибки.
      */
     @PostMapping("/transfer")
     public ResponseEntity<Transaction> transferMoney(@RequestParam String fromAccount,
                                                      @RequestParam String toAccount,
                                                      @RequestParam double amount) {
-        if ((fromAccount == null && toAccount == null) || amount <= 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        else if (fromAccount != null && toAccount != null) if (fromAccount.equals(toAccount)) return new ResponseEntity<>(HttpStatus.CONFLICT);
+        if ((fromAccount == null && toAccount == null) || amount <= 0)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        else if (fromAccount != null && toAccount != null)
+            if (fromAccount.equals(toAccount)) return new ResponseEntity<>(HttpStatus.CONFLICT);
         return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.transferMoney(fromAccount, toAccount, amount));
     }
 
     /**
      * Выполняет зачисление денег на счёт.
      *
-     * @param toAccount Номер счёта, на который производится зачисление
-     * @param amount Сумма зачисления
-     * @return ResponseEntity с созданной транзакцией
+     * @param toAccount Номер счёта, на который производится зачисление.
+     * @param amount    Сумма зачисления.
+     * @return {@link ResponseEntity} с созданной транзакцией.
      */
     @PostMapping("/deposit")
     public ResponseEntity<Transaction> depositMoney(@RequestParam String toAccount,
@@ -52,9 +54,9 @@ public class TransactionController {
     /**
      * Выполняет списание денег со счёта.
      *
-     * @param fromAccount Номер счёта, с которого производится списание
-     * @param amount Сумма списания
-     * @return ResponseEntity с созданной транзакцией
+     * @param fromAccount Номер счёта, с которого производится списание.
+     * @param amount      Сумма списания.
+     * @return {@link ResponseEntity} с созданной транзакцией.
      */
     @PostMapping("/debit")
     public ResponseEntity<Transaction> debitMoney(@RequestParam String fromAccount,

@@ -11,9 +11,9 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
 
     /**
-     * Создает и настраивает экземпляр GroupedOpenApi для публичного API.
+     * Создает и настраивает экземпляр {@link GroupedOpenApi} для публичного API.
      *
-     * @return настроенный GroupedOpenApi
+     * @return Настроенный {@link GroupedOpenApi}.
      */
     @Bean
     public GroupedOpenApi publicApi() {

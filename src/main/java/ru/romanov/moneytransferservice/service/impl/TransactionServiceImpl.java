@@ -26,16 +26,6 @@ public class TransactionServiceImpl implements TransactionService {
     private AccountService accountService;
     private CurrencyConverterClient currencyConverterClient;
 
-    /**
-     * Создает новую транзакцию.
-     *
-     * @param fromAccountNumber Номер счёта отправителя (может быть null)
-     * @param toAccountNumber   Номер счёта получателя (может быть null)
-     * @param type              Тип транзакции (TRANSFER, DEPOSIT, DEBIT)
-     * @param amount            Сумма транзакции
-     * @param currencyCode      Код валюты
-     * @return Созданная транзакция
-     */
     @Override
     public Transaction createTransaction(String fromAccountNumber, String toAccountNumber, TypeTransactionEnum type, double amount, String currencyCode) {
         Transaction transaction = new Transaction();
@@ -48,15 +38,6 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.save(transaction);
     }
 
-    /**
-     * Выполняет операцию перевода денег между счетами.
-     *
-     * @param fromAccountNumber Номер счёта отправителя
-     * @param toAccountNumber   Номер счёта получателя
-     * @param amount            Сумма перевода
-     * @return Созданная транзакция
-     * @throws TransferYourselfException если попытка перевода на самого себя
-     */
     @Override
     @Transactional
     public Transaction transferMoney(String fromAccountNumber, String toAccountNumber, double amount) {
@@ -72,13 +53,6 @@ public class TransactionServiceImpl implements TransactionService {
         return createTransaction(fromAccountNumber, toAccountNumber, TypeTransactionEnum.TRANSFER, amount, fromAccount.getCurrency());
     }
 
-    /**
-     * Выполняет операцию внесения денег на счёт.
-     *
-     * @param toAccountNumber Номер счёта
-     * @param amount          Сумма внесения
-     * @return Созданная транзакция
-     */
     @Override
     @Transactional
     public Transaction depositMoney(String toAccountNumber, double amount) {
@@ -87,13 +61,6 @@ public class TransactionServiceImpl implements TransactionService {
         return createTransaction(null, toAccountNumber, TypeTransactionEnum.DEPOSIT, amount, toAccount.getCurrency());
     }
 
-    /**
-     * Выполняет операцию списания денег со счёта.
-     *
-     * @param fromAccountNumber Номер счёта
-     * @param amount            Сумма списания
-     * @return Созданная транзакция
-     */
     @Override
     @Transactional
     public Transaction debitMoney(String fromAccountNumber, double amount) {

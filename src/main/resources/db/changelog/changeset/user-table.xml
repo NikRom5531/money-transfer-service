@@ -3,7 +3,7 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
     <changeSet id="2024-06-20-19-54" author="NikRom5531">
         <createTable tableName="users">
@@ -22,7 +22,7 @@
             <column name="patronymic_name" type="VARCHAR(50)">
                 <constraints nullable="true"/>
             </column>
-            <column name="birth_date" type="VARCHAR(10)">
+            <column name="birth_date" type="DATE">
                 <constraints nullable="false"/>
             </column>
             <column name="email" type="VARCHAR(255)">
