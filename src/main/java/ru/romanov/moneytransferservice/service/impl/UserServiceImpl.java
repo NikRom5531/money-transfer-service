@@ -27,15 +27,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(String lastName, String firstName, String patronymicName, LocalDate birthDate, String email, String phoneNumber) {
-        User user = new User();
-        user.setUniqueNumber(generateUniqueNumber());
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setPatronymicName(patronymicName);
-        user.setBirthDate(birthDate);
-        user.setEmail(email);
-        user.setPhoneNumber(phoneNumber);
-        return userRepository.save(user);
+        return userRepository.save(
+                User.builder()
+                        .firstName(firstName)
+                        .lastName(lastName)
+                        .patronymicName(patronymicName)
+                        .birthDate(birthDate)
+                        .email(email)
+                        .phoneNumber(phoneNumber)
+                        .build());
     }
 
     @Override
@@ -44,13 +44,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(long id) {
-        return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
-    }
-
-    @Override
-    public User getUserByUniqueNumber(String uniqueNumber) {
-        return userRepository.findByUniqueNumber(uniqueNumber).orElseThrow(UserNotFoundException::new);
+    public User getUserByUid(UUID uid) {
+        return userRepository.findById(uid).orElseThrow(UserNotFoundException::new);
     }
 
     @Override
@@ -59,26 +54,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(long id) {
-        accountRepository.findByOwnerUniqueNumber(getUserById(id).getUniqueNumber()).forEach(account -> accountService.deleteAccount(account.getAccountNumber()));
-        userRepository.deleteById(id);
-    }
-
-    /**
-     * Генерирует уникальный номер пользователя.
-     *
-     * @return Уникальный номер пользователя.
-     */
-    private String generateUniqueNumber() {
-        int blocks = 3;
-        int lengthBlock = 8;
-        StringBuilder uniqueNumber;
-        do {
-            uniqueNumber = new StringBuilder();
-            for (int i = 0; i < blocks; i++) {
-                uniqueNumber.append(UUID.randomUUID().toString().toUpperCase().replace("-", "/"), 0, lengthBlock).append((i == blocks - 1 ? "" : "-"));
-            }
-        } while (userRepository.existsByUniqueNumber(uniqueNumber.toString()));
-        return uniqueNumber.toString();
+    public void deleteUser(UUID uid) {
+        accountRepository.findByOwnerUid(getUserByUid(uid).getUid()).forEach(account -> accountService.deleteAccount(account.getUid()));
+        userRepository.deleteById(uid);
     }
 }

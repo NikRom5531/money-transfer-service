@@ -1,4 +1,4 @@
-package ru.romanov.moneytransferservice.enums;
+package ru.romanov.moneytransferservice.model.enums;
 
 /**
  * Перечисление для типов транзакций:

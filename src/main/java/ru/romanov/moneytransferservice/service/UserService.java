@@ -5,6 +5,7 @@ import ru.romanov.moneytransferservice.model.entity.User;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Интерфейс сервиса для работы с пользователями.
@@ -38,20 +39,11 @@ public interface UserService {
     /**
      * Возвращает пользователя по его идентификатору.
      *
-     * @param id Идентификатор пользователя.
+     * @param uid Идентификатор пользователя.
      * @return Найденный пользователь.
      * @throws UserNotFoundException Если пользователь не найден.
      */
-    User getUserById(long id);
-
-    /**
-     * Возвращает пользователя по его уникальному номеру.
-     *
-     * @param uniqueNumber Уникальный номер пользователя.
-     * @return Найденный пользователь.
-     * @throws UserNotFoundException Если пользователь не найден.
-     */
-    User getUserByUniqueNumber(String uniqueNumber);
+    User getUserByUid(UUID uid);
 
     /**
      * Обновляет информацию о пользователе.
@@ -63,7 +55,7 @@ public interface UserService {
     /**
      * Удаляет пользователя по его идентификатору, а также все его связанные аккаунты.
      *
-     * @param id Идентификатор пользователя для удаления.
+     * @param uid Идентификатор пользователя для удаления.
      */
-    void deleteUser(long id);
+    void deleteUser(UUID uid);
 }

@@ -7,7 +7,7 @@
 
     <changeSet id="2024-06-19-21-02" author="NikRom5531">
         <createTable tableName="transaction">
-            <column name="id" type="BIGINT" autoIncrement="true">
+            <column name="id" type="UUID" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="transaction_date" type="TIMESTAMP">

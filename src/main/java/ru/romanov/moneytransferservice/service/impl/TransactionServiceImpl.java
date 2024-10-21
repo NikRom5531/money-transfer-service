@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import ru.romanov.moneytransferservice.client.CurrencyConverterClient;
-import ru.romanov.moneytransferservice.enums.TypeTransactionEnum;
+import ru.romanov.moneytransferservice.model.enums.TypeTransactionEnum;
 import ru.romanov.moneytransferservice.exception.TransferYourselfException;
 import ru.romanov.moneytransferservice.model.entity.Account;
 import ru.romanov.moneytransferservice.model.entity.Transaction;
@@ -14,6 +14,7 @@ import ru.romanov.moneytransferservice.service.AccountService;
 import ru.romanov.moneytransferservice.service.TransactionService;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Реализация сервиса для выполнения транзакций между счетами.
@@ -27,20 +28,21 @@ public class TransactionServiceImpl implements TransactionService {
     private CurrencyConverterClient currencyConverterClient;
 
     @Override
-    public Transaction createTransaction(String fromAccountNumber, String toAccountNumber, TypeTransactionEnum type, double amount, String currencyCode) {
-        Transaction transaction = new Transaction();
-        transaction.setTransactionDate(LocalDateTime.now());
-        if (fromAccountNumber != null) transaction.setFromAccountNumber(fromAccountNumber);
-        if (toAccountNumber != null) transaction.setToAccountNumber(toAccountNumber);
-        transaction.setType(type);
-        transaction.setAmount(amount);
-        transaction.setCurrencyCode(currencyCode);
-        return transactionRepository.save(transaction);
+    public Transaction createTransaction(UUID fromAccountNumber, UUID toAccountNumber, TypeTransactionEnum type, double amount, String currencyCode) {
+        return transactionRepository.save(
+                Transaction.builder()
+                        .transactionDate(LocalDateTime.now())
+                        .fromAccount(accountService.getAccountByAccountNumber(fromAccountNumber))
+                        .toAccount(accountService.getAccountByAccountNumber(toAccountNumber))
+                        .type(type)
+                        .amount(amount)
+                        .currencyCode(currencyCode)
+                        .build());
     }
 
     @Override
     @Transactional
-    public Transaction transferMoney(String fromAccountNumber, String toAccountNumber, double amount) {
+    public Transaction transferMoney(UUID fromAccountNumber, UUID toAccountNumber, double amount) {
         if (fromAccountNumber.equals(toAccountNumber)) throw new TransferYourselfException();
         Account fromAccount = accountService.getAccountByAccountNumber(fromAccountNumber);
         Account toAccount = accountService.getAccountByAccountNumber(toAccountNumber);
@@ -55,7 +57,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional
-    public Transaction depositMoney(String toAccountNumber, double amount) {
+    public Transaction depositMoney(UUID toAccountNumber, double amount) {
         Account toAccount = accountService.getAccountByAccountNumber(toAccountNumber);
         accountService.updateAccountBalance(toAccountNumber, TypeTransactionEnum.DEPOSIT, amount);
         return createTransaction(null, toAccountNumber, TypeTransactionEnum.DEPOSIT, amount, toAccount.getCurrency());
@@ -63,7 +65,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional
-    public Transaction debitMoney(String fromAccountNumber, double amount) {
+    public Transaction debitMoney(UUID fromAccountNumber, double amount) {
         Account fromAccount = accountService.getAccountByAccountNumber(fromAccountNumber);
         accountService.updateAccountBalance(fromAccountNumber, TypeTransactionEnum.DEBIT, amount);
         return createTransaction(fromAccountNumber, null, TypeTransactionEnum.DEBIT, amount, fromAccount.getCurrency());

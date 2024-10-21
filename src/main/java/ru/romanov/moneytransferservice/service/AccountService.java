@@ -1,6 +1,6 @@
 package ru.romanov.moneytransferservice.service;
 
-import ru.romanov.moneytransferservice.enums.TypeTransactionEnum;
+import ru.romanov.moneytransferservice.model.enums.TypeTransactionEnum;
 import ru.romanov.moneytransferservice.exception.AccountNotFoundException;
 import ru.romanov.moneytransferservice.exception.CodeNotSupportedException;
 import ru.romanov.moneytransferservice.exception.InsufficientFundsException;
@@ -9,6 +9,7 @@ import ru.romanov.moneytransferservice.model.entity.Account;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Интерфейс сервиса для работы со счетами пользователей.
@@ -18,41 +19,41 @@ public interface AccountService {
     /**
      * Создает новый счёт для пользователя.
      *
-     * @param currency         Валюта счёта.
-     * @param userUniqueNumber Уникальный номер пользователя.
+     * @param currency Валюта счёта.
+     * @param userUid  Уникальный номер пользователя.
      * @return {@link Account} - Созданный счёт.
      * @throws UserNotFoundException     Если пользователь не найден.
      * @throws CodeNotSupportedException Если указанная валюта не поддерживается.
      */
     Account createAccount(String currency,
-                          String userUniqueNumber);
+                          UUID userUid);
 
     /**
      * Возвращает счёт по его номеру.
      *
-     * @param accountNumber Номер счёта.
+     * @param accountUid Номер счёта.
      * @return {@link Account} Найденный счёт.
      * @throws AccountNotFoundException Если счёт не найден.
      */
-    Account getAccountByAccountNumber(String accountNumber);
+    Account getAccountByAccountNumber(UUID accountUid);
 
     /**
      * Обновляет баланс счёта в зависимости от типа транзакции.
      *
-     * @param accountNumber Номер счёта.
-     * @param type          Тип транзакции (дебет или кредит).
-     * @param amount        Сумма для обновления баланса.
+     * @param accountUid Номер счёта.
+     * @param type       Тип транзакции (дебет или кредит).
+     * @param amount     Сумма для обновления баланса.
      */
-    void updateAccountBalance(String accountNumber,
+    void updateAccountBalance(UUID accountUid,
                               TypeTransactionEnum type,
                               double amount);
 
     /**
      * Удаляет счёт по его номеру.
      *
-     * @param accountNumber Номер счёта.
+     * @param accountUid Номер счёта.
      */
-    void deleteAccount(String accountNumber);
+    void deleteAccount(UUID accountUid);
 
     /**
      * Возвращает список всех счетов.

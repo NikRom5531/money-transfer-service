@@ -10,12 +10,12 @@ import java.util.Map;
 
 /**
  * Клиент Feign для взаимодействия с сервисом конвертации валют.
- * Аннотация {@code @FeignClient} определяет имя клиента и URL сервиса,
+ * Аннотация {@link FeignClient} определяет имя клиента и URL сервиса,
  * а также конфигурацию для этого клиента.
  */
 @FeignClient(
         name = "currency-converter-client",
-        url = "${currency.converter.service.url}",
+        url = "${currency.converter.service.url}/api/currency",
         configuration = CurrencyConverterConfiguration.class)
 public interface CurrencyConverterClient {
 
@@ -27,7 +27,7 @@ public interface CurrencyConverterClient {
      * @param amount       Сумма для конвертации.
      * @return Конвертированная сумма.
      */
-    @GetMapping("/api/currency/convert")
+    @GetMapping("/convert")
     Double convert(@RequestParam("from") String fromCurrency,
                    @RequestParam("to") String toCurrency,
                    @RequestParam("amount") Double amount);
@@ -37,7 +37,7 @@ public interface CurrencyConverterClient {
      *
      * @return Список поддерживаемых валютных кодов.
      */
-    @GetMapping("/api/currency/supported-codes")
+    @GetMapping("/supported-codes")
     List<String> supportedCodes();
 
     /**

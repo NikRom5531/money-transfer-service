@@ -6,27 +6,28 @@ import ru.romanov.moneytransferservice.model.entity.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Репозиторий для работы с сущностью {@link User}, предоставляющий методы для доступа к базе данных.
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, UUID> {
     /**
      * Проверяет существование пользователя по уникальному номеру.
      *
-     * @param userIdNumber Уникальный номер пользователя.
+     * @param userUid Уникальный номер пользователя.
      * @return {@code true}, если пользователь существует, в противном случае - {@code false}.
      */
-    boolean existsByUniqueNumber(String userIdNumber);
+    boolean existsByUid(UUID userUid);
 
     /**
      * Находит пользователя по уникальному номеру.
      *
-     * @param userIdNumber Уникальный номер пользователя.
+     * @param userUid Уникальный номер пользователя.
      * @return {@link Optional} с найденным пользователем или пустой {@link Optional}, если пользователь не найден.
      */
-    Optional<User> findByUniqueNumber(String userIdNumber);
+    Optional<User> findByUid(UUID userUid);
 
     /**
      * Находит пользователя по email.

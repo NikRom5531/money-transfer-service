@@ -7,11 +7,8 @@
 
     <changeSet id="2024-06-19-21-01" author="NikRom5531">
         <createTable tableName="account">
-            <column name="id" type="BIGINT" autoIncrement="true">
+            <column name="id" type="UUID" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="account_number" type="VARCHAR(255)">
-                <constraints nullable="false" unique="true"/>
             </column>
             <column name="balance" type="DECIMAL(19,2)">
                 <constraints nullable="false"/>
@@ -19,7 +16,7 @@
             <column name="currency" type="VARCHAR(3)">
                 <constraints nullable="false"/>
             </column>
-            <column name="owner_unique_number" type="VARCHAR(255)">
+            <column name="owner_uid" type="UUID">
                 <constraints nullable="false"/>
             </column>
         </createTable>

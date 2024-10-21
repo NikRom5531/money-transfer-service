@@ -10,9 +10,6 @@
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="unique_number" type="VARCHAR(255)">
-                <constraints nullable="false" unique="true"/>
-            </column>
             <column name="last_name" type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>

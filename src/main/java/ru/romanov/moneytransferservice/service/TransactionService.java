@@ -1,8 +1,10 @@
 package ru.romanov.moneytransferservice.service;
 
-import ru.romanov.moneytransferservice.enums.TypeTransactionEnum;
+import ru.romanov.moneytransferservice.model.enums.TypeTransactionEnum;
 import ru.romanov.moneytransferservice.exception.TransferYourselfException;
 import ru.romanov.moneytransferservice.model.entity.Transaction;
+
+import java.util.UUID;
 
 /**
  * Интерфейс сервиса для выполнения транзакций между счетами.
@@ -18,8 +20,8 @@ public interface TransactionService {
      * @param currencyCode      Код валюты.
      * @return Созданная транзакция.
      */
-    Transaction createTransaction(String fromAccountNumber,
-                                  String toAccountNumber,
+    Transaction createTransaction(UUID fromAccountNumber,
+                                  UUID toAccountNumber,
                                   TypeTransactionEnum type,
                                   double amount,
                                   String currencyCode);
@@ -33,8 +35,8 @@ public interface TransactionService {
      * @return Созданная транзакция.
      * @throws TransferYourselfException При попытке перевода на счёт отправителя.
      */
-    Transaction transferMoney(String fromAccountNumber,
-                              String toAccountNumber,
+    Transaction transferMoney(UUID fromAccountNumber,
+                              UUID toAccountNumber,
                               double amount);
 
     /**
@@ -44,7 +46,7 @@ public interface TransactionService {
      * @param amount          Сумма внесения.
      * @return Созданная транзакция.
      */
-    Transaction depositMoney(String toAccountNumber,
+    Transaction depositMoney(UUID toAccountNumber,
                              double amount);
 
     /**
@@ -54,6 +56,6 @@ public interface TransactionService {
      * @param amount            Сумма списания.
      * @return Созданная транзакция.
      */
-    Transaction debitMoney(String fromAccountNumber,
+    Transaction debitMoney(UUID fromAccountNumber,
                            double amount);
 }

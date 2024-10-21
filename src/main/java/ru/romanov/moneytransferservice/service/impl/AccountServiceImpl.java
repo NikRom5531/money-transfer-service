@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import ru.romanov.moneytransferservice.client.CurrencyConverterClient;
-import ru.romanov.moneytransferservice.enums.TypeTransactionEnum;
+import ru.romanov.moneytransferservice.model.enums.TypeTransactionEnum;
 import ru.romanov.moneytransferservice.exception.AccountNotFoundException;
 import ru.romanov.moneytransferservice.exception.CodeNotSupportedException;
 import ru.romanov.moneytransferservice.exception.InsufficientFundsException;
@@ -35,24 +35,23 @@ public class AccountServiceImpl implements AccountService {
     private final CurrencyConverterClient currencyConverterClient;
 
     @Override
-    public Account createAccount(String currency, String userUniqueNumber) {
-        Account account = new Account();
-        account.setCurrency(checkSupportedCode(currency));
-        account.setOwnerUniqueNumber(userRepository.findByUniqueNumber(userUniqueNumber).orElseThrow(UserNotFoundException::new).getUniqueNumber());
-        account.setAccountNumber(generateUniqueNumber());
-        account.setBalance(0);
-        log.info("Account created. Account number: {}, currency: {}, owner unique number: {}", account.getAccountNumber(), account.getCurrency(), account.getOwnerUniqueNumber());
-        return accountRepository.save(account);
+    public Account createAccount(String currency, UUID userUid) {
+        return accountRepository.save(
+                Account.builder()
+                        .currency(checkSupportedCode(currency))
+                        .owner(userRepository.findByUid(userUid).orElseThrow(UserNotFoundException::new))
+                        .balance(0)
+                        .build());
     }
 
     @Override
-    public Account getAccountByAccountNumber(String accountNumber) {
-        return accountRepository.findByAccountNumber(accountNumber).orElseThrow(AccountNotFoundException::new);
+    public Account getAccountByAccountNumber(UUID accountUid) {
+        return accountRepository.findByUid(accountUid).orElseThrow(AccountNotFoundException::new);
     }
 
     @Override
-    public void updateAccountBalance(String accountNumber, TypeTransactionEnum type, double amount) {
-        Account account = getAccountByAccountNumber(accountNumber);
+    public void updateAccountBalance(UUID accountUid, TypeTransactionEnum type, double amount) {
+        Account account = getAccountByAccountNumber(accountUid);
         double accountBalance = account.getBalance();
         switch (type) {
             case DEPOSIT -> account.setBalance(accountBalance + amount);
@@ -66,21 +65,22 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional
-    public void deleteAccount(String accountNumber) {
-        Account account = getAccountByAccountNumber(accountNumber);
+    public void deleteAccount(UUID accountUid) {
+        Account account = getAccountByAccountNumber(accountUid);
         if (account.getBalance() > 0) {
             double accountBalance = account.getBalance();
-            updateAccountBalance(accountNumber, TypeTransactionEnum.DEBIT, accountBalance);
-            Transaction transaction = new Transaction();
-            transaction.setTransactionDate(LocalDateTime.now());
-            transaction.setFromAccountNumber(accountNumber);
-            transaction.setAmount(accountBalance);
-            transaction.setType(TypeTransactionEnum.DEBIT);
-            transaction.setCurrencyCode(account.getCurrency());
-            transactionRepository.save(transaction);
+            updateAccountBalance(accountUid, TypeTransactionEnum.DEBIT, accountBalance);
+            transactionRepository.save(
+                    Transaction.builder()
+                            .transactionDate(LocalDateTime.now())
+                            .fromAccount(account)
+                            .amount(accountBalance)
+                            .type(TypeTransactionEnum.DEBIT)
+                            .currencyCode(account.getCurrency())
+                            .build());
         }
-        accountRepository.deleteById(account.getId());
-        log.info("Delete account. Account number: {}", account.getAccountNumber());
+        accountRepository.deleteById(account.getUid());
+        log.info("Delete account. Account number: {}", account.getUid());
     }
 
     @Override
@@ -109,24 +109,5 @@ public class AccountServiceImpl implements AccountService {
     private String checkSupportedCode(String code) {
         if (!getSupportedCurrencyMap().containsKey(code.toUpperCase())) throw new CodeNotSupportedException();
         return code.toUpperCase();
-    }
-
-    /**
-     * Генерирует уникальный номер счёта.
-     *
-     * @return Уникальный номер счёта.
-     */
-    private String generateUniqueNumber() {
-        int blocks = 4;
-        int lengthBlock = 6;
-        StringBuilder accountNumber;
-        do {
-            accountNumber = new StringBuilder();
-            for (int i = 0; i < blocks; i++)
-                accountNumber.append(UUID.randomUUID().toString().toUpperCase()
-                                .replace("-", "/"), 0, lengthBlock)
-                        .append((i == blocks - 1 ? "" : "-"));
-        } while (accountRepository.existsByAccountNumber(accountNumber.toString()));
-        return accountNumber.toString();
     }
 }
