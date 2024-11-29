@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class InsufficientFundsException extends RuntimeException {
+
     /**
      * Конструктор исключения с сообщением "Insufficient funds".
      */

@@ -7,7 +7,7 @@
 
     <changeSet id="2024-06-19-21-02" author="NikRom5531">
         <createTable tableName="transaction">
-            <column name="id" type="UUID" autoIncrement="true">
+            <column name="uid" type="UUID" generationType="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="transaction_date" type="TIMESTAMP">
@@ -16,10 +16,10 @@
             <column name="type" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="from_account_number" type="VARCHAR(255)">
+            <column name="from_account_uid" type="UUID">
                 <constraints nullable="true"/>
             </column>
-            <column name="to_account_number" type="VARCHAR(255)">
+            <column name="to_account_uid" type="UUID">
                 <constraints nullable="true"/>
             </column>
             <column name="amount" type="DECIMAL(19,2)">

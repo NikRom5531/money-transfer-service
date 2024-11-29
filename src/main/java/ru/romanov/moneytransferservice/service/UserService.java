@@ -2,8 +2,9 @@ package ru.romanov.moneytransferservice.service;
 
 import ru.romanov.moneytransferservice.exception.UserNotFoundException;
 import ru.romanov.moneytransferservice.model.entity.User;
+import ru.romanov.moneytransferservice.model.request.CreateUserRequest;
+import ru.romanov.moneytransferservice.model.request.UpdateUserRequest;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,20 +15,10 @@ public interface UserService {
     /**
      * Создает нового пользователя.
      *
-     * @param lastName       Фамилия.
-     * @param firstName      Имя.
-     * @param patronymicName Отчество.
-     * @param birthDate      Дата рождения.
-     * @param email          Электронная почта.
-     * @param phoneNumber    Номер телефона.
+     * @param request Данные нового пользователя.
      * @return Созданный пользователь.
      */
-    User createUser(String lastName,
-                    String firstName,
-                    String patronymicName,
-                    LocalDate birthDate,
-                    String email,
-                    String phoneNumber);
+    User createUser(CreateUserRequest request);
 
     /**
      * Возвращает список всех пользователей.
@@ -48,14 +39,20 @@ public interface UserService {
     /**
      * Обновляет информацию о пользователе.
      *
-     * @param user Пользователь для обновления.
+     * @param request Пользователь для обновления.
      */
-    void updateUser(User user);
+    User updateUser(UpdateUserRequest request);
 
     /**
-     * Удаляет пользователя по его идентификатору, а также все его связанные аккаунты.
+     * Удаляет пользователя по его идентификатору, а также все его связанные счета.
      *
      * @param uid Идентификатор пользователя для удаления.
      */
     void deleteUser(UUID uid);
+
+    /**
+     * Удаляет пользователя, а также все его связанные счета.
+     *
+     */
+    void deleteYourselfUser();
 }

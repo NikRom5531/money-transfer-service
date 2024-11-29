@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <changeSet id="2024-11-16-19-39" author="NikRom5531">
+        <addUniqueConstraint tableName="users" columnNames="email"/>
+        <addUniqueConstraint tableName="users" columnNames="phone_number"/>
+    </changeSet>
+</databaseChangeLog>

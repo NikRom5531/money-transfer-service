@@ -12,6 +12,7 @@ import java.util.UUID;
  */
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
+
     /**
      * Находит все транзакции, где указанный счет является отправителем или получателем.
      *

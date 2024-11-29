@@ -7,7 +7,7 @@
 
     <changeSet id="2024-06-19-21-01" author="NikRom5531">
         <createTable tableName="account">
-            <column name="id" type="UUID" autoIncrement="true">
+            <column name="uid" type="UUID" generationType="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="balance" type="DECIMAL(19,2)">

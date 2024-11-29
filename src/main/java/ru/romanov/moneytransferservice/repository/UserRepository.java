@@ -13,6 +13,7 @@ import java.util.UUID;
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
+
     /**
      * Проверяет существование пользователя по уникальному номеру.
      *
@@ -20,6 +21,22 @@ public interface UserRepository extends JpaRepository<User, UUID> {
      * @return {@code true}, если пользователь существует, в противном случае - {@code false}.
      */
     boolean existsByUid(UUID userUid);
+
+    /**
+     * Проверяет существование пользователя по уникальному номеру.
+     *
+     * @param email Email пользователя.
+     * @return {@code true}, если пользователь существует, в противном случае - {@code false}.
+     */
+    boolean existsByEmail(String email);
+
+    /**
+     * Проверяет существование пользователя по уникальному номеру.
+     *
+     * @param phoneNumber Номер телефона пользователя.
+     * @return {@code true}, если пользователь существует, в противном случае - {@code false}.
+     */
+    boolean existsByPhoneNumber(String phoneNumber);
 
     /**
      * Находит пользователя по уникальному номеру.
@@ -44,6 +61,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
      * @return {@link Optional} с найденным пользователем или пустой {@link Optional}, если пользователь не найден.
      */
     Optional<User> findByPhoneNumber(String phoneNumber);
+
+    Optional<User> findByEmailOrPhoneNumber(String email, String phoneNumber);
 
     /**
      * Находит список пользователей по фамилии и имени.

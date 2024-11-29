@@ -58,7 +58,8 @@ public class CurrencyConverterConfiguration {
          * Конструктор, задающий поддерживаемые типы медиа для конвертера.
          */
         FeignHttpMessageConverter() {
-            setSupportedMediaTypes(Collections.singletonList(new org.springframework.http.MediaType("application", "javascript")));
+            setSupportedMediaTypes(Collections.singletonList(
+                    new org.springframework.http.MediaType("application", "javascript")));
         }
     }
 }

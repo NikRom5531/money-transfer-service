@@ -20,13 +20,11 @@ public interface AccountService {
      * Создает новый счёт для пользователя.
      *
      * @param currency Валюта счёта.
-     * @param userUid  Уникальный номер пользователя.
      * @return {@link Account} - Созданный счёт.
      * @throws UserNotFoundException     Если пользователь не найден.
      * @throws CodeNotSupportedException Если указанная валюта не поддерживается.
      */
-    Account createAccount(String currency,
-                          UUID userUid);
+    Account createAccount(String currency);
 
     /**
      * Возвращает счёт по его номеру.
@@ -38,15 +36,32 @@ public interface AccountService {
     Account getAccountByAccountNumber(UUID accountUid);
 
     /**
+     * Возвращает список всех счетов пользователя.
+     *
+     * @return {@link Account} Найденный счёт.
+     * @throws AccountNotFoundException Если счёт не найден.
+     */
+    List<Account> getAccountsByUserUid();
+
+    /**
      * Обновляет баланс счёта в зависимости от типа транзакции.
      *
      * @param accountUid Номер счёта.
      * @param type       Тип транзакции (дебет или кредит).
      * @param amount     Сумма для обновления баланса.
      */
-    void updateAccountBalance(UUID accountUid,
-                              TypeTransactionEnum type,
-                              double amount);
+    void updateAccountBalance(
+            UUID accountUid,
+            TypeTransactionEnum type,
+            double amount
+    );
+
+    /**
+     * Удаляет счёт авторизованного пользователя по его номеру.
+     *
+     * @param accountUid Номер счёта.
+     */
+    void deleteYourselfAccount(UUID accountUid);
 
     /**
      * Удаляет счёт по его номеру.
@@ -76,6 +91,8 @@ public interface AccountService {
      * @param amount         Сумма для проверки.
      * @throws InsufficientFundsException Если на счёте недостаточно средств.
      */
-    void checkBalance(double accountBalance,
-                      double amount);
+    void checkBalance(
+            double accountBalance,
+            double amount
+    );
 }

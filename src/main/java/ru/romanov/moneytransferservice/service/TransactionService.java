@@ -20,11 +20,13 @@ public interface TransactionService {
      * @param currencyCode      Код валюты.
      * @return Созданная транзакция.
      */
-    Transaction createTransaction(UUID fromAccountNumber,
-                                  UUID toAccountNumber,
-                                  TypeTransactionEnum type,
-                                  double amount,
-                                  String currencyCode);
+    Transaction createTransaction(
+            UUID fromAccountNumber,
+            UUID toAccountNumber,
+            TypeTransactionEnum type,
+            double amount,
+            String currencyCode
+    );
 
     /**
      * Выполняет операцию перевода денег между счетами.
@@ -35,9 +37,11 @@ public interface TransactionService {
      * @return Созданная транзакция.
      * @throws TransferYourselfException При попытке перевода на счёт отправителя.
      */
-    Transaction transferMoney(UUID fromAccountNumber,
-                              UUID toAccountNumber,
-                              double amount);
+    Transaction transferMoney(
+            UUID fromAccountNumber,
+            UUID toAccountNumber,
+            double amount
+    );
 
     /**
      * Выполняет операцию внесения денег на счёт.
@@ -46,8 +50,10 @@ public interface TransactionService {
      * @param amount          Сумма внесения.
      * @return Созданная транзакция.
      */
-    Transaction depositMoney(UUID toAccountNumber,
-                             double amount);
+    Transaction depositMoney(
+            UUID toAccountNumber,
+            double amount
+    );
 
     /**
      * Выполняет операцию списания денег со счёта.
@@ -56,6 +62,8 @@ public interface TransactionService {
      * @param amount            Сумма списания.
      * @return Созданная транзакция.
      */
-    Transaction debitMoney(UUID fromAccountNumber,
-                           double amount);
+    Transaction debitMoney(
+            UUID fromAccountNumber,
+            double amount
+    );
 }

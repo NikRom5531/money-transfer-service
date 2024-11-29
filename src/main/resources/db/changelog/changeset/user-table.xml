@@ -7,7 +7,7 @@
 
     <changeSet id="2024-06-20-19-54" author="NikRom5531">
         <createTable tableName="users">
-            <column name="id" type="BIGINT" autoIncrement="true">
+            <column name="uid" type="UUID" generationType="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="last_name" type="VARCHAR(50)">

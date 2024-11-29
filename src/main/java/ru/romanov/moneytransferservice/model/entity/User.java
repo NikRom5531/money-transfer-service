@@ -1,5 +1,6 @@
 package ru.romanov.moneytransferservice.model.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,29 +31,38 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Сущность пользователя системы денежных переводов")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Schema(description = "Уникальный идентификатор пользователя", example = "123e4567-e89b-12d3-a456-426614174000")
     private UUID uid;
 
     @NotBlank(message = "Фамилия не может быть пустой")
+    @Schema(description = "Фамилия пользователя", example = "Иванов", requiredMode = Schema.RequiredMode.REQUIRED)
     private String lastName;
 
     @NotBlank(message = "Имя не может быть пустым")
+    @Schema(description = "Имя пользователя", example = "Иван", requiredMode = Schema.RequiredMode.REQUIRED)
     private String firstName;
 
     @Size(max = 50, message = "Отчество не может содержать более 50 символов")
+    @Schema(description = "Отчество пользователя", example = "Сергеевич", maxLength = 50)
     private String patronymicName;
 
     @NotNull(message = "Дата рождения не может быть null")
     @Past(message = "Дата рождения должна быть в прошлом")
+    @Schema(description = "Дата рождения пользователя", example = "1990-05-15", format = "date", requiredMode = Schema.RequiredMode.REQUIRED)
     private LocalDate birthDate;
 
     @NotNull(message = "Email не может быть null")
     @Email(message = "Некорректный формат email")
+    @Schema(description = "Электронная почта пользователя", example = "example@example.com", requiredMode = Schema.RequiredMode.REQUIRED)
     private String email;
 
     @NotBlank(message = "Номер телефона не может быть пустым")
-    @Pattern(regexp = "^\\+?[0-9\\-\\s]{7,15}$", message = "Некорректный формат номера телефона")
+    @Pattern(regexp = "((\\+7|8)\\d{10})", message = "Некорректный формат номера телефона")
+    @Schema(description = "Номер телефона пользователя", example = "+79161234567", requiredMode = Schema.RequiredMode.REQUIRED, pattern = "(\\+7|8)\\d{10}")
     private String phoneNumber;
 }

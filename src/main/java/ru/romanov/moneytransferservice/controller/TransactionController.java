@@ -1,30 +1,32 @@
 package ru.romanov.moneytransferservice.controller;
 
-import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import ru.romanov.moneytransferservice.exception.AccountNotFoundException;
-import ru.romanov.moneytransferservice.model.entity.Transaction;
-import ru.romanov.moneytransferservice.service.TransactionService;
+import ru.romanov.moneytransferservice.model.response.TransactionResponse;
 
 import java.util.UUID;
 
 /**
- * Контроллер для управления транзакциями.
+ * Интерфейс контроллера для управления транзакциями.
  */
-@RestController
-@RequestMapping(value = "/api/transactions", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-@AllArgsConstructor
-public class TransactionController {
-    private TransactionService transactionService;
+@Tag(name = "Транзакции", description = "Осуществление переводов")
+@Validated
+public interface TransactionController {
 
     /**
-     * Выполняет перевод денег между счетами.
+     * [POST] Выполняет перевод денег между счетами.
      *
      * @param fromAccount Номер счёта, с которого производится перевод.
      * @param toAccount   Номер счёта, на который производится перевод.
@@ -32,48 +34,156 @@ public class TransactionController {
      * @return {@link ResponseEntity} с созданной транзакцией или кодом ошибки.
      */
     @PostMapping("/transfer")
-    public ResponseEntity<Transaction> transferMoney(@RequestParam UUID fromAccount,
-                                                     @RequestParam UUID toAccount,
-                                                     @RequestParam double amount) {
-        if ((fromAccount == null && toAccount == null) || amount <= 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        } else {
-            if (fromAccount != null && fromAccount.equals(toAccount)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).build();
-            } else {
-                try {
-                    return ResponseEntity.ok(transactionService.transferMoney(fromAccount, toAccount, amount));
-                } catch (AccountNotFoundException e) {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).header("Error-Message", "Account Not Found").build();
-                }
-            }
-        }
-    }
+    @Operation(summary = "Перевод денег между счетами", description = "Выполняет перевод указанной суммы между двумя счетами.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Перевод успешно выполнен",
+                    content = @Content(schema = @Schema(implementation = TransactionResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса",
+                    content = @Content(examples = @ExampleObject(value = """
+                            {
+                                "timestamp": "2024-11-15T18:51:12.001+00:00",
+                                "status": 400,
+                                "error": "Bad Request",
+                                "path": "/api/transaction/transfer"
+                            }"""))),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещён"),
+            @ApiResponse(responseCode = "404", description = "Счёт указанный в запросе не найден",
+                    content = @Content(examples = @ExampleObject(value = """
+                            {
+                                "timestamp": "2024-11-15T18:51:12.001+00:00",
+                                "status": 404,
+                                "error": "Not Found",
+                                "path": "/api/transaction/transfer"
+                            }"""))),
+            @ApiResponse(responseCode = "409", description = "Счёт отправитель и счёт получатель не должны быть одинаковые",
+                    content = @Content(examples = @ExampleObject(value = """
+                            {
+                                "timestamp": "2024-11-15T18:51:12.001+00:00",
+                                "status": 409,
+                                "error": "Conflict",
+                                "path": "/api/transaction/transfer"
+                            }"""))),
+            @ApiResponse(responseCode = "500", description = "Ошибка на сервере",
+                    content = @Content(examples = @ExampleObject(value = """
+                            {
+                                "timestamp": "2024-11-15T18:51:12.001+00:00",
+                                "status": 500,
+                                "error": "Internal Server Error",
+                                "path": "/api/transaction/transfer"
+                            }"""))),
+            @ApiResponse(responseCode = "503", description = "Сервис недоступен",
+                    content = @Content(examples = @ExampleObject(value = """
+                            {
+                                "timestamp": "2024-11-15T18:51:12.001+00:00",
+                                "status": 503,
+                                "error": "Service Unavailable",
+                                "path": "/api/transaction/transfer"
+                            }""")))
+    })
+    ResponseEntity<TransactionResponse> transferMoney(
+            @Valid @RequestParam @NotNull UUID fromAccount,
+            @Valid @RequestParam @NotNull UUID toAccount,
+            @Valid @RequestParam @DecimalMin(value = "0.01") double amount
+    );
 
     /**
-     * Выполняет зачисление денег на счёт.
+     * [POST] Выполняет зачисление денег на счёт.
      *
      * @param toAccount Номер счёта, на который производится зачисление.
      * @param amount    Сумма зачисления.
      * @return {@link ResponseEntity} с созданной транзакцией.
      */
     @PostMapping("/deposit")
-    public ResponseEntity<Transaction> depositMoney(@RequestParam UUID toAccount,
-                                                    @RequestParam double amount) {
-        return ResponseEntity.ok(transactionService.depositMoney(toAccount, amount));
-    }
+    @Operation(summary = "Зачисление денег на счёт", description = "Выполняет зачисление указанной суммы на счёт.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Зачисление успешно выполнено",
+                    content = @Content(schema = @Schema(implementation = TransactionResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса",
+                    content = @Content(examples = @ExampleObject(value = """
+                            {
+                                "timestamp": "2024-11-15T18:51:12.001+00:00",
+                                "status": 400,
+                                "error": "Bad Request",
+                                "path": "/api/transaction/deposit"
+                            }"""))),
+            @ApiResponse(responseCode = "404", description = "Счёт указанный в запросе не найден",
+                    content = @Content(examples = @ExampleObject(value = """
+                            {
+                                "timestamp": "2024-11-15T18:51:12.001+00:00",
+                                "status": 404,
+                                "error": "Not Found",
+                                "path": "/api/transaction/deposit"
+                            }"""))),
+            @ApiResponse(responseCode = "500", description = "Ошибка на сервере",
+                    content = @Content(examples = @ExampleObject(value = """
+                            {
+                                "timestamp": "2024-11-15T18:51:12.001+00:00",
+                                "status": 500,
+                                "error": "Internal Server Error",
+                                "path": "/api/transaction/deposit"
+                            }"""))),
+            @ApiResponse(responseCode = "503", description = "Сервис недоступен",
+                    content = @Content(examples = @ExampleObject(value = """
+                            {
+                                "timestamp": "2024-11-15T18:51:12.001+00:00",
+                                "status": 503,
+                                "error": "Service Unavailable",
+                                "path": "/api/transaction/deposit"
+                            }""")))
+    })
+    ResponseEntity<TransactionResponse> depositMoney(
+            @Valid @RequestParam @NotNull UUID toAccount,
+            @Valid @RequestParam @DecimalMin(value = "0.01") double amount
+    );
 
     /**
-     * Выполняет списание денег со счёта.
+     * [POST] Выполняет списание денег со счёта.
      *
      * @param fromAccount Номер счёта, с которого производится списание.
      * @param amount      Сумма списания.
      * @return {@link ResponseEntity} с созданной транзакцией.
      */
     @PostMapping("/debit")
-    public ResponseEntity<Transaction> debitMoney(@RequestParam UUID fromAccount,
-                                                  @RequestParam double amount) {
-        return ResponseEntity.ok(transactionService.debitMoney(fromAccount, amount));
-    }
+    @Operation(summary = "Списание денег со счёта", description = "Выполняет списание указанной суммы со счёта.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Списание успешно выполнено",
+                    content = @Content(schema = @Schema(implementation = TransactionResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса",
+                    content = @Content(examples = @ExampleObject(value = """
+                            {
+                                "timestamp": "2024-11-15T18:51:12.001+00:00",
+                                "status": 400,
+                                "error": "Bad Request",
+                                "path": "/api/transaction/debit"
+                            }"""))),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещён", content = @Content(examples = @ExampleObject())),
+            @ApiResponse(responseCode = "404", description = "Счёт указанный в запросе не найден",
+                    content = @Content(examples = @ExampleObject(value = """
+                            {
+                                "timestamp": "2024-11-15T18:51:12.001+00:00",
+                                "status": 404,
+                                "error": "Not Found",
+                                "path": "/api/transaction/debit"
+                            }"""))),
+            @ApiResponse(responseCode = "500", description = "Ошибка на сервере",
+                    content = @Content(examples = @ExampleObject(value = """
+                            {
+                                "timestamp": "2024-11-15T18:51:12.001+00:00",
+                                "status": 500,
+                                "error": "Internal Server Error",
+                                "path": "/api/transaction/debit"
+                            }"""))),
+            @ApiResponse(responseCode = "503", description = "Сервис недоступен",
+                    content = @Content(examples = @ExampleObject(value = """
+                            {
+                                "timestamp": "2024-11-15T18:51:12.001+00:00",
+                                "status": 503,
+                                "error": "Service Unavailable",
+                                "path": "/api/transaction/debit"
+                            }""")))
+    })
+    ResponseEntity<TransactionResponse> debitMoney(
+            @Valid @RequestParam @NotNull UUID fromAccount,
+            @Valid @RequestParam @DecimalMin(value = "0.01") double amount
+    );
 }
-

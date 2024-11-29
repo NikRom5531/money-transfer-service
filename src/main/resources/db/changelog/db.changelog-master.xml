@@ -8,5 +8,7 @@
     <include file="db/changelog/changeset/account-table.xml"/>
     <include file="db/changelog/changeset/transaction-table.xml"/>
     <include file="db/changelog/changeset/user-table.xml"/>
+    <include file="db/changelog/changeset/auth-user-table.xml"/>
+    <includeAll path="db/changelog/changeset/changes-low"/>
 
 </databaseChangeLog>

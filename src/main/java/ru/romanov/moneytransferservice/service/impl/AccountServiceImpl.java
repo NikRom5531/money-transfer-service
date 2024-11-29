@@ -5,17 +5,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import ru.romanov.moneytransferservice.client.CurrencyConverterClient;
+import ru.romanov.moneytransferservice.exception.ForbiddenException;
+import ru.romanov.moneytransferservice.exception.ServiceUnavailableException;
+import ru.romanov.moneytransferservice.model.entity.User;
 import ru.romanov.moneytransferservice.model.enums.TypeTransactionEnum;
 import ru.romanov.moneytransferservice.exception.AccountNotFoundException;
 import ru.romanov.moneytransferservice.exception.CodeNotSupportedException;
 import ru.romanov.moneytransferservice.exception.InsufficientFundsException;
-import ru.romanov.moneytransferservice.exception.UserNotFoundException;
 import ru.romanov.moneytransferservice.model.entity.Account;
 import ru.romanov.moneytransferservice.model.entity.Transaction;
 import ru.romanov.moneytransferservice.repository.AccountRepository;
 import ru.romanov.moneytransferservice.repository.TransactionRepository;
-import ru.romanov.moneytransferservice.repository.UserRepository;
 import ru.romanov.moneytransferservice.service.AccountService;
+import ru.romanov.moneytransferservice.service.AuthService;
+import ru.romanov.moneytransferservice.service.SecurityService;
+import ru.romanov.moneytransferservice.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,17 +33,20 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class AccountServiceImpl implements AccountService {
+
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
-    private final UserRepository userRepository;
+    private final SecurityService securityService;
     private final CurrencyConverterClient currencyConverterClient;
 
     @Override
-    public Account createAccount(String currency, UUID userUid) {
+    public Account createAccount(String currency) {
+        User user = securityService.getCurrentUser();
+
         return accountRepository.save(
                 Account.builder()
                         .currency(checkSupportedCode(currency))
-                        .owner(userRepository.findByUid(userUid).orElseThrow(UserNotFoundException::new))
+                        .owner(user)
                         .balance(0)
                         .build());
     }
@@ -47,6 +54,13 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account getAccountByAccountNumber(UUID accountUid) {
         return accountRepository.findByUid(accountUid).orElseThrow(AccountNotFoundException::new);
+    }
+
+    @Override
+    public List<Account> getAccountsByUserUid() {
+        User user = securityService.getCurrentUser();
+
+        return accountRepository.findByOwnerUid(user.getUid());
     }
 
     @Override
@@ -67,6 +81,7 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public void deleteAccount(UUID accountUid) {
         Account account = getAccountByAccountNumber(accountUid);
+
         if (account.getBalance() > 0) {
             double accountBalance = account.getBalance();
             updateAccountBalance(accountUid, TypeTransactionEnum.DEBIT, accountBalance);
@@ -84,19 +99,29 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
+    public void deleteYourselfAccount(UUID accountUid) {
+        Account account = getAccountByAccountNumber(accountUid);
+        checkAccess(account);
+
+        deleteAccount(accountUid);
+    }
+
+    @Override
     public List<Account> getAccounts() {
         return accountRepository.findAll();
     }
 
     @Override
     public Map<String, String> getSupportedCurrencyMap() {
-        return currencyConverterClient.supportedCurrencyMap();
+        var map = currencyConverterClient.supportedCurrencyMap();
+        if (map.isEmpty()) throw new ServiceUnavailableException();
+        else return map;
     }
 
     @Override
     public void checkBalance(double accountBalance, double amount) {
-        if (accountBalance - amount < 0)
-            throw new InsufficientFundsException();
+        if (accountBalance - amount < 0) throw new InsufficientFundsException();
     }
 
     /**
@@ -109,5 +134,13 @@ public class AccountServiceImpl implements AccountService {
     private String checkSupportedCode(String code) {
         if (!getSupportedCurrencyMap().containsKey(code.toUpperCase())) throw new CodeNotSupportedException();
         return code.toUpperCase();
+    }
+
+    private void checkAccess(Account account) {
+        User user = securityService.getCurrentUser();
+
+        if (!account.getOwner().getUid().equals(user.getUid())) {
+            throw new ForbiddenException("You are not owner of this account");
+        }
     }
 }

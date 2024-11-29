@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(HttpStatus.CONFLICT)
 public class TransferYourselfException extends RuntimeException {
+
     /**
      * Конструктор исключения с заданным сообщением.
      */

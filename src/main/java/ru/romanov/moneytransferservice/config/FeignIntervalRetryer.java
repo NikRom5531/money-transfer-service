@@ -3,6 +3,7 @@ package ru.romanov.moneytransferservice.config;
 import feign.RetryableException;
 import feign.Retryer;
 import lombok.extern.slf4j.Slf4j;
+import ru.romanov.moneytransferservice.exception.ServiceUnavailableException;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,8 +24,8 @@ public class FeignIntervalRetryer implements Retryer {
      */
     public FeignIntervalRetryer() {
         this.initialInterval = TimeUnit.SECONDS.toMillis(1);    // Интервал секунд для ошибки 429
-        this.extendedInterval = TimeUnit.MINUTES.toMillis(5);   // Интервал минут для 5xx ошибок
-        this.maxAttempts = 20;                                          // Количество попыток
+        this.extendedInterval = TimeUnit.SECONDS.toMillis(1);   // Интервал минут для 5xx ошибок
+        this.maxAttempts = 60;                                          // Количество попыток
         this.attempt = 1;
     }
 
@@ -36,20 +37,30 @@ public class FeignIntervalRetryer implements Retryer {
      */
     @Override
     public void continueOrPropagate(RetryableException e) {
-        if (e.status() == 429 || e.status() >= 500) {
-            long interval = (e.status() == 429) ? initialInterval : extendedInterval;
+        switch (e.status()) {
+            case 429 -> {
+                long interval = (e.status() == 429) ? initialInterval : extendedInterval;
 
-            if (attempt++ >= maxAttempts) {
-                log.warn("Max attempts reached. Propagating exception.");
-                throw e;
+                if (attempt++ >= maxAttempts) {
+                    log.error("Max attempts reached. Propagating exception.");
+                    throw e;
+                }
+
+                log.warn("Attempt {} failed with status {}. Retrying in {} ms", attempt, e.status(), interval);
+
+                try {
+                    Thread.sleep(interval);
+                } catch (InterruptedException ignored) {
+                    Thread.currentThread().interrupt();
+                }
             }
-
-            log.info("Attempt {} failed with status {}. Retrying in {} ms", attempt, e.status(), interval);
-
-            try {
-                Thread.sleep(interval);
-            } catch (InterruptedException ignored) {
-                Thread.currentThread().interrupt();
+            default -> {
+                if (e.status() >= 500) {
+                    if (e.status() == 503) {
+                        log.error("503 Service Unavailable.");
+                        throw new ServiceUnavailableException();
+                    }
+                }
             }
         }
     }

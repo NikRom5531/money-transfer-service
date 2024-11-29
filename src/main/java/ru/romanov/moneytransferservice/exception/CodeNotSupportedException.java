@@ -4,14 +4,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Исключение, выбрасываемое при неподдерживаемом коде.
+ * Исключение, выбрасываемое при неподдерживаемом коде валюты.
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class CodeNotSupportedException extends RuntimeException {
+
     /**
-     * Конструктор исключения с сообщением "Code not supported".
+     * Конструктор исключения с сообщением "Currency code not supported".
      */
     public CodeNotSupportedException() {
-        super("Code not supported");
+        super("Currency code not supported");
     }
 }

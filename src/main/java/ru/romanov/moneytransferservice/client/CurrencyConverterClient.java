@@ -16,7 +16,8 @@ import java.util.Map;
 @FeignClient(
         name = "currency-converter-client",
         url = "${currency.converter.service.url}/api/currency",
-        configuration = CurrencyConverterConfiguration.class)
+        configuration = CurrencyConverterConfiguration.class
+)
 public interface CurrencyConverterClient {
 
     /**
@@ -28,9 +29,11 @@ public interface CurrencyConverterClient {
      * @return Конвертированная сумма.
      */
     @GetMapping("/convert")
-    Double convert(@RequestParam("from") String fromCurrency,
-                   @RequestParam("to") String toCurrency,
-                   @RequestParam("amount") Double amount);
+    Double convert(
+            @RequestParam("from") String fromCurrency,
+            @RequestParam("to") String toCurrency,
+            @RequestParam("amount") Double amount
+    );
 
     /**
      * Метод для получения списка поддерживаемых валютных кодов.
