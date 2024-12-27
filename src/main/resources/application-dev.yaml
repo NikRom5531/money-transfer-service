@@ -5,7 +5,7 @@ spring:
     password: root
 
 server:
-  port: ${SERVER_PORT}
+  port: 8081
 
 currency:
   converter:
@@ -13,4 +13,4 @@ currency:
       url: http://localhost:8083
 
 ngrok:
-  tunnel-url: http://localhost:${server.port}
+  tunnel-url: http://localhost:8081

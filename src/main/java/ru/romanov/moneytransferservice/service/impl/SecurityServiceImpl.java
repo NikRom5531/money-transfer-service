@@ -1,6 +1,7 @@
 package ru.romanov.moneytransferservice.service.impl;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -71,7 +72,7 @@ public class SecurityServiceImpl implements SecurityService {
                     .getBody();
 
             return claims.getSubject();
-        } catch (Exception e) {
+        } catch (JwtException e) {
             throw new UnauthorizedException("Invalid token");
         }
     }

@@ -33,10 +33,9 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/api/accounts/supported-currency-map",
                                 "/api/transactions/deposit"
-                        )
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated())
+                        ).permitAll()
+                        .anyRequest().authenticated()
+                )
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class);

@@ -1,6 +1,7 @@
 package ru.romanov.moneytransferservice.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.romanov.moneytransferservice.model.entity.Account;
 
@@ -37,5 +38,8 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
      * @return Список счетов, принадлежащих указанному владельцу.
      */
     List<Account> findByOwnerUid(UUID ownerUid);
+
+    @Query("SELECT a FROM Account a JOIN a.owner u WHERE u.phoneNumber = :phoneNumber")
+    List<Account> findByOwnerPhoneNumber(String phoneNumber);
 }
 

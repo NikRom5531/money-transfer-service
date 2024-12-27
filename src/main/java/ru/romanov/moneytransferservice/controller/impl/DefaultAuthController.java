@@ -12,6 +12,8 @@ import ru.romanov.moneytransferservice.model.request.LoginRequest;
 import ru.romanov.moneytransferservice.model.request.RegisterRequest;
 import ru.romanov.moneytransferservice.service.AuthService;
 
+import java.util.Map;
+
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -25,7 +27,8 @@ public class DefaultAuthController implements AuthController {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(authService.registerUser(request));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registration failed: " + e.getMessage());
+            Map<String, String> response = Map.of("message", "Registration failed: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 
@@ -34,7 +37,8 @@ public class DefaultAuthController implements AuthController {
         try {
             return ResponseEntity.ok(authService.loginUser(request));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed: " + e.getMessage());
+            Map<String, String> response = Map.of("message", "Login failed: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }
 
@@ -44,7 +48,8 @@ public class DefaultAuthController implements AuthController {
             authService.logout();
             return ResponseEntity.ok("Logout");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Logout failed: " + e.getMessage());
+            Map<String, String> response = Map.of("message", "Logout failed: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }
 }

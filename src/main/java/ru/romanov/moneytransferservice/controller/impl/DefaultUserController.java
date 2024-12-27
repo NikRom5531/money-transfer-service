@@ -26,13 +26,6 @@ public class DefaultUserController implements UserController {
 
     private final UserService userService;
 
-/*    @Override
-    public ResponseEntity<User> createUser(CreateUserRequest request) {
-        var user = userService.createUser(request);
-        log.info("User created: {}", user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
-    }*/
-
     @Override
     public ResponseEntity<List<User>> getUsers() {
         List<User> users = userService.getUsers();

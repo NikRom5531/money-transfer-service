@@ -3,7 +3,6 @@ package ru.romanov.moneytransferservice.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.romanov.moneytransferservice.exception.ForbiddenException;
 import ru.romanov.moneytransferservice.exception.UserAlreadyExistsException;
 import ru.romanov.moneytransferservice.exception.UserNotFoundException;
 import ru.romanov.moneytransferservice.model.entity.User;
@@ -59,7 +58,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(UpdateUserRequest request) {
-        User user = securityService.getCurrentUser();
+        User user = request.getUid() == null ? securityService.getCurrentUser() : getUserByUid(request.getUid());
 
         if (request.getFirstName() != null && !request.getFirstName().isEmpty()) {
             user.setFirstName(request.getFirstName());
@@ -105,10 +104,14 @@ public class UserServiceImpl implements UserService {
     }
 
     private void checkEmail(String email) {
-        if (userRepository.existsByEmail(email)) throw new UserAlreadyExistsException(email);
+        if (userRepository.existsByEmail(email)) {
+            throw new UserAlreadyExistsException(email + " already registered");
+        }
     }
 
     private void checkPhoneNumber(String phoneNumber) {
-        if (userRepository.existsByPhoneNumber(phoneNumber)) throw new UserAlreadyExistsException(phoneNumber);
+        if (userRepository.existsByPhoneNumber(phoneNumber)) {
+            throw new UserAlreadyExistsException(phoneNumber + " already registered");
+        }
     }
 }

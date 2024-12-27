@@ -32,6 +32,7 @@ public class AuthServiceImpl implements AuthService {
         if (!request.getPassword().equals(request.getPasswordConfirm())) return null;
 
         User user = userService.createUser(request);
+        log.info("User created: {}", user.getUid());
 
         return authUserRepository.save(
                 AuthUser.builder()

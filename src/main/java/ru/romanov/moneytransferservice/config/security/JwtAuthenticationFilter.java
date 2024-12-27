@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ru.romanov.moneytransferservice.exception.UnauthorizedException;
 import ru.romanov.moneytransferservice.service.SecurityService;
 import ru.romanov.moneytransferservice.utils.AuthUtils;
 
@@ -42,7 +43,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void processAuthentication(String token, HttpServletRequest request) {
-        String username = securityService.extractUserName(token);
+        String username;
+
+        try {
+            username = securityService.extractUserName(token);
+        } catch (UnauthorizedException e) {
+            username = null;
+        }
 
         if (StringUtils.isNotEmpty(username)) {
             UserDetails userDetails = securityService.loadUserByUsername(username);

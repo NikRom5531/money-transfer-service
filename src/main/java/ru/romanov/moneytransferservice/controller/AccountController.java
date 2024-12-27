@@ -1,5 +1,6 @@
 package ru.romanov.moneytransferservice.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.romanov.moneytransferservice.model.response.AccountResponse;
 
@@ -43,48 +45,24 @@ public interface AccountController {
             @ApiResponse(responseCode = "201", description = "Счёт успешно создан",
                     content = @Content(schema = @Schema(implementation = AccountResponse.class))),
             @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 400,
-                                "error": "Bad Request",
-                                "path": "/api/account"
-                            }"""))),
-            @ApiResponse(responseCode = "403", description = "Доступ запрещён", content = @Content(examples = @ExampleObject())),
+                    content = @Content(examples = @ExampleObject())),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещён",
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "404", description = "Пользователь по указанному UID не найден",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 404,
-                                "error": "Not Found",
-                                "path": "/api/account"
-                            }"""))),
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 500,
-                                "error": "Internal Server Error",
-                                "path": "/api/account"
-                            }"""))),
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "503", description = "Сервис недоступен",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 503,
-                                "error": "Service Unavailable",
-                                "path": "/api/account"
-                            }""")))
+                    content = @Content(examples = @ExampleObject()))
     })
-    ResponseEntity<AccountResponse> createAccount(
-            @Valid @RequestParam @NotBlank String currency
-    );
+    ResponseEntity<AccountResponse> createAccount(@Valid @RequestParam @NotBlank String currency);
 
     /**
      * [GET] Возвращает список всех счетов.
      *
      * @return {@link ResponseEntity} со списком счетов или кодом ошибки.
      */
+    @Hidden
     @GetMapping("/list")
     @Operation(summary = "Получить список всех счетов", description = "Возвращает список всех счетов в системе.")
     @ApiResponses(value = {
@@ -92,15 +70,10 @@ public interface AccountController {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = AccountResponse.class)))),
             @ApiResponse(responseCode = "204", description = "Список счетов пуст",
                     content = @Content(examples = @ExampleObject(value = "[]"))),
-            @ApiResponse(responseCode = "403", description = "Доступ запрещён"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещён",
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 500,
-                                "error": "Internal Server Error",
-                                "path": "/api/account/list"
-                            }""")))
+                    content = @Content(examples = @ExampleObject()))
     })
     ResponseEntity<List<AccountResponse>> getAccounts();
 
@@ -115,32 +88,24 @@ public interface AccountController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Информация о счёте получена",
                     content = @Content(schema = @Schema(implementation = AccountResponse.class))),
-            @ApiResponse(responseCode = "403", description = "Доступ запрещён"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещён",
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "404", description = "Счёт не найден",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 404,
-                                "error": "Not Found",
-                                "path": "/api/account"
-                            }"""))),
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 500,
-                                "error": "Internal Server Error",
-                                "path": "/api/account"
-                            }""")))
+                    content = @Content(examples = @ExampleObject()))
     })
     ResponseEntity<AccountResponse> getAccount(@Valid @RequestParam @NotNull UUID uid);
 
+    @GetMapping("/phone-number")
+    ResponseEntity<List<AccountResponse>> getAccountsByPhoneNumber(@Valid @RequestBody @NotBlank String phoneNumber);
+
     /**
-     * [GET] Возвращает список всех счетов пользователя.
+     * [GET] Возвращает список всех счетов текущего пользователя.
      *
      * @return {@link ResponseEntity} со списком счетов или кодом ошибки.
      */
-    @GetMapping("/list-by-user")
+    @GetMapping("/list/current")
     @Operation(summary = "Получить список всех счетов пользователя",
             description = "Возвращает список всех счетов пользователя.")
     @ApiResponses(value = {
@@ -148,17 +113,12 @@ public interface AccountController {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = AccountResponse.class)))),
             @ApiResponse(responseCode = "204", description = "Список счетов пуст",
                     content = @Content(examples = @ExampleObject(value = "[]"))),
-            @ApiResponse(responseCode = "403", description = "Доступ запрещён"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещён",
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 500,
-                                "error": "Internal Server Error",
-                                "path": "/api/account/list-by-user"
-                            }""")))
+                    content = @Content(examples = @ExampleObject()))
     })
-    ResponseEntity<List<AccountResponse>> getAccountsByUserUid();
+    ResponseEntity<List<AccountResponse>> getAccountsByCurrentUser();
 
     /**
      * [GET] Возвращает карту поддерживаемых валют.
@@ -177,23 +137,12 @@ public interface AccountController {
                               ...
                               "ZAR": "Южноафриканский рэнд"
                             }"""))),
-            @ApiResponse(responseCode = "403", description = "Доступ запрещён"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещён",
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 500,
-                                "error": "Internal Server Error",
-                                "path": "/api/account/supported-currency-map"
-                            }"""))),
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "503", description = "Сервис недоступен",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 503,
-                                "error": "Service Unavailable",
-                                "path": "/api/account/supported-currency-map"
-                            }""")))
+                    content = @Content(examples = @ExampleObject()))
     })
     ResponseEntity<Map<String, String>> getSupportedCurrencyMap();
 
@@ -208,23 +157,12 @@ public interface AccountController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Счёт успешно удалён",
                     content = @Content(examples = @ExampleObject(value = "[]"))),
-            @ApiResponse(responseCode = "403", description = "Доступ запрещён"),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещён",
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "404", description = "Счёт не найден",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 404,
-                                "error": "Not Found",
-                                "path": "/api/account"
-                            }"""))),
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 500,
-                                "error": "Internal Server Error",
-                                "path": "/api/account"
-                            }""")))
+                    content = @Content(examples = @ExampleObject()))
     })
     ResponseEntity<String> deleteAccount(@Valid @RequestParam @NotNull UUID uid);
 }

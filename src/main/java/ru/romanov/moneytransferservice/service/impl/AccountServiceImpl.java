@@ -2,24 +2,22 @@ package ru.romanov.moneytransferservice.service.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.romanov.moneytransferservice.client.CurrencyConverterClient;
-import ru.romanov.moneytransferservice.exception.ForbiddenException;
-import ru.romanov.moneytransferservice.exception.ServiceUnavailableException;
-import ru.romanov.moneytransferservice.model.entity.User;
-import ru.romanov.moneytransferservice.model.enums.TypeTransactionEnum;
 import ru.romanov.moneytransferservice.exception.AccountNotFoundException;
 import ru.romanov.moneytransferservice.exception.CodeNotSupportedException;
+import ru.romanov.moneytransferservice.exception.ForbiddenException;
 import ru.romanov.moneytransferservice.exception.InsufficientFundsException;
+import ru.romanov.moneytransferservice.exception.ServiceUnavailableException;
 import ru.romanov.moneytransferservice.model.entity.Account;
 import ru.romanov.moneytransferservice.model.entity.Transaction;
+import ru.romanov.moneytransferservice.model.entity.User;
+import ru.romanov.moneytransferservice.model.enums.TypeTransactionEnum;
 import ru.romanov.moneytransferservice.repository.AccountRepository;
 import ru.romanov.moneytransferservice.repository.TransactionRepository;
 import ru.romanov.moneytransferservice.service.AccountService;
-import ru.romanov.moneytransferservice.service.AuthService;
 import ru.romanov.moneytransferservice.service.SecurityService;
-import ru.romanov.moneytransferservice.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -57,9 +55,13 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public List<Account> getAccountsByUserUid() {
-        User user = securityService.getCurrentUser();
+    public List<Account> getAccountsByPhoneNumber(String phoneNumber) {
+        return accountRepository.findByOwnerPhoneNumber(phoneNumber);
+    }
 
+    @Override
+    public List<Account> getAccountsByCurrentUser() {
+        User user = securityService.getCurrentUser();
         return accountRepository.findByOwnerUid(user.getUid());
     }
 
@@ -94,6 +96,7 @@ public class AccountServiceImpl implements AccountService {
                             .currencyCode(account.getCurrency())
                             .build());
         }
+
         accountRepository.deleteById(account.getUid());
         log.info("Delete account. Account number: {}", account.getUid());
     }

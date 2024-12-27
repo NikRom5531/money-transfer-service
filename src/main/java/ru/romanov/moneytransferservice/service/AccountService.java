@@ -35,13 +35,15 @@ public interface AccountService {
      */
     Account getAccountByAccountNumber(UUID accountUid);
 
+    List<Account> getAccountsByPhoneNumber(String phoneNumber);
+
     /**
-     * Возвращает список всех счетов пользователя.
+     * Возвращает список всех счетов текущего пользователя.
      *
      * @return {@link Account} Найденный счёт.
      * @throws AccountNotFoundException Если счёт не найден.
      */
-    List<Account> getAccountsByUserUid();
+    List<Account> getAccountsByCurrentUser();
 
     /**
      * Обновляет баланс счёта в зависимости от типа транзакции.

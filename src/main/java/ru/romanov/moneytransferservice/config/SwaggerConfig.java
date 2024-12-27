@@ -37,7 +37,6 @@ public class SwaggerConfig {
      */
     @Bean
     public OpenAPI customOpenAPI(
-            @Value("${springdoc.swagger-ui.version}") String apiVersion,
             @Value("${ngrok.tunnel-url}") String serverUrl
     ) {
         Server prod = new Server();
@@ -49,7 +48,7 @@ public class SwaggerConfig {
         dev.setDescription("Dev Server");
 
         return new OpenAPI().info(new Info().title("Application API")
-                        .version(apiVersion)
+                        .version("v1")
                         .contact(new Contact().name("Nikolay Romanov"))
                 )
                 .servers(List.of(prod, dev));

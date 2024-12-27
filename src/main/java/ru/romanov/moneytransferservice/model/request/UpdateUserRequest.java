@@ -20,10 +20,9 @@ import java.util.UUID;
 @Schema(description = "Запрос для обновления сущности пользователя")
 public class UpdateUserRequest {
 
-//    @Schema(description = "Уникальный идентификатор пользователя",
-//            example = "123e4567-e89b-12d3-a456-426614174000",
-//            requiredMode = Schema.RequiredMode.REQUIRED)
-//    private UUID uid;
+    @Schema(description = "Уникальный идентификатор пользователя",
+            example = "123e4567-e89b-12d3-a456-426614174000")
+    private UUID uid;
 
     @Schema(description = "Фамилия пользователя",
             example = "Иванов")

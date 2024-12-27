@@ -39,46 +39,17 @@ public interface TransactionController {
             @ApiResponse(responseCode = "200", description = "Перевод успешно выполнен",
                     content = @Content(schema = @Schema(implementation = TransactionResponse.class))),
             @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 400,
-                                "error": "Bad Request",
-                                "path": "/api/transaction/transfer"
-                            }"""))),
-            @ApiResponse(responseCode = "403", description = "Доступ запрещён"),
+                    content = @Content(examples = @ExampleObject())),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещён",
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "404", description = "Счёт указанный в запросе не найден",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 404,
-                                "error": "Not Found",
-                                "path": "/api/transaction/transfer"
-                            }"""))),
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "409", description = "Счёт отправитель и счёт получатель не должны быть одинаковые",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 409,
-                                "error": "Conflict",
-                                "path": "/api/transaction/transfer"
-                            }"""))),
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 500,
-                                "error": "Internal Server Error",
-                                "path": "/api/transaction/transfer"
-                            }"""))),
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "503", description = "Сервис недоступен",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 503,
-                                "error": "Service Unavailable",
-                                "path": "/api/transaction/transfer"
-                            }""")))
+                    content = @Content(examples = @ExampleObject()))
     })
     ResponseEntity<TransactionResponse> transferMoney(
             @Valid @RequestParam @NotNull UUID fromAccount,
@@ -99,37 +70,13 @@ public interface TransactionController {
             @ApiResponse(responseCode = "200", description = "Зачисление успешно выполнено",
                     content = @Content(schema = @Schema(implementation = TransactionResponse.class))),
             @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 400,
-                                "error": "Bad Request",
-                                "path": "/api/transaction/deposit"
-                            }"""))),
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "404", description = "Счёт указанный в запросе не найден",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 404,
-                                "error": "Not Found",
-                                "path": "/api/transaction/deposit"
-                            }"""))),
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 500,
-                                "error": "Internal Server Error",
-                                "path": "/api/transaction/deposit"
-                            }"""))),
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "503", description = "Сервис недоступен",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 503,
-                                "error": "Service Unavailable",
-                                "path": "/api/transaction/deposit"
-                            }""")))
+                    content = @Content(examples = @ExampleObject()))
     })
     ResponseEntity<TransactionResponse> depositMoney(
             @Valid @RequestParam @NotNull UUID toAccount,
@@ -149,38 +96,15 @@ public interface TransactionController {
             @ApiResponse(responseCode = "200", description = "Списание успешно выполнено",
                     content = @Content(schema = @Schema(implementation = TransactionResponse.class))),
             @ApiResponse(responseCode = "400", description = "Некорректные параметры запроса",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 400,
-                                "error": "Bad Request",
-                                "path": "/api/transaction/debit"
-                            }"""))),
-            @ApiResponse(responseCode = "403", description = "Доступ запрещён", content = @Content(examples = @ExampleObject())),
+                    content = @Content(examples = @ExampleObject())),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещён",
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "404", description = "Счёт указанный в запросе не найден",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 404,
-                                "error": "Not Found",
-                                "path": "/api/transaction/debit"
-                            }"""))),
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 500,
-                                "error": "Internal Server Error",
-                                "path": "/api/transaction/debit"
-                            }"""))),
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "503", description = "Сервис недоступен",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 503,
-                                "error": "Service Unavailable",
-                                "path": "/api/transaction/debit"
-                            }""")))
+                    content = @Content(examples = @ExampleObject()))
     })
     ResponseEntity<TransactionResponse> debitMoney(
             @Valid @RequestParam @NotNull UUID fromAccount,

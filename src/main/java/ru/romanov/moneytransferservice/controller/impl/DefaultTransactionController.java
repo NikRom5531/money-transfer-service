@@ -31,21 +31,21 @@ public class DefaultTransactionController implements TransactionController {
     @Override
     public ResponseEntity<TransactionResponse> transferMoney(UUID fromAccount, UUID toAccount, double amount) {
         Transaction transaction = transactionService.transferMoney(fromAccount, toAccount, amount);
-        log.info("Transfer money of {} from {} to {}", amount, fromAccount, toAccount);
+        log.info("Transfer money of {} from {} to {}", transaction.getAmount() + " " + transaction.getCurrencyCode(), fromAccount, toAccount);
         return ResponseEntity.ok(transactionMapper.toResponse(transaction));
     }
 
     @Override
     public ResponseEntity<TransactionResponse> depositMoney(UUID toAccount, double amount) {
         Transaction transaction = transactionService.depositMoney(toAccount, amount);
-        log.info("Deposit money of {} to {}", amount, toAccount);
+        log.info("Deposit money of {} to {}", transaction.getAmount() + " " + transaction.getCurrencyCode(), toAccount);
         return ResponseEntity.ok(transactionMapper.toResponse(transaction));
     }
 
     @Override
     public ResponseEntity<TransactionResponse> debitMoney(UUID fromAccount, double amount) {
         Transaction transaction = transactionService.debitMoney(fromAccount, amount);
-        log.info("Debit money of {} to {}", amount, fromAccount);
+        log.info("Debit money of {} to {}", transaction.getAmount() + " " + transaction.getCurrencyCode(), fromAccount);
         return ResponseEntity.ok(transactionMapper.toResponse(transaction));
     }
 }

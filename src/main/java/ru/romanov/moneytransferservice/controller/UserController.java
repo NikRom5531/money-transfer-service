@@ -1,5 +1,6 @@
 package ru.romanov.moneytransferservice.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,48 +31,6 @@ import java.util.UUID;
 @Validated
 public interface UserController {
 
-    /*
-    /**
-     * [POST] Создает нового пользователя.
-     *
-     * @param request Данные нового пользователя.
-     * @return {@link ResponseEntity} с созданным пользователем или кодом ошибки.
-     */
-    /*
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Создание нового пользователя",
-            description = "Создает нового пользователя на основе переданных данных.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Пользователь успешно создан",
-                    content = @Content(schema = @Schema(implementation = User.class))),
-            @ApiResponse(responseCode = "400", description = "Некорректные данные пользователя",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 400,
-                                "error": "Bad Request",
-                                "path": "/api/users"
-                            }"""))),
-            @ApiResponse(responseCode = "409", description = "Указанный email или номер телефона уже зарегистрированы",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 409,
-                                "error": "Conflict",
-                                "path": "/api/users"
-                            }"""))),
-            @ApiResponse(responseCode = "500", description = "Ошибка на сервере",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 500,
-                                "error": "Internal Server Error",
-                                "path": "/api/users"
-                            }""")))
-    })
-    ResponseEntity<User> createUser(@Valid @RequestBody CreateUserRequest request);// */
-
     /**
      * [GET] Возвращает список всех пользователей.
      *
@@ -85,15 +44,10 @@ public interface UserController {
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = User.class)))),
             @ApiResponse(responseCode = "204", description = "Список пользователей пуст",
                     content = @Content(examples = @ExampleObject(value = "[]"))),
-            @ApiResponse(responseCode = "403", description = "Доступ запрещён", content = @Content(examples = @ExampleObject())),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещён",
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 500,
-                                "error": "Internal Server Error",
-                                "path": "/api/users"
-                            }""")))
+                    content = @Content(examples = @ExampleObject()))
     })
     ResponseEntity<List<User>> getUsers();
 
@@ -104,44 +58,21 @@ public interface UserController {
      * @return {@link ResponseEntity} с созданным пользователем или кодом ошибки.
      */
     @PatchMapping
-    @Operation(summary = "Обновление пользователя по UID указанному в теле запроса",
+    @Operation(summary = "Обновление пользователя",
             description = "Обновляет информацию о пользователе по его уникальному идентификатору.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Пользователь успешно обновлён",
                     content = @Content(schema = @Schema(implementation = User.class))),
             @ApiResponse(responseCode = "400", description = "Некорректные данные пользователя",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 400,
-                                "error": "Bad Request",
-                                "path": "/api/users"
-                            }"""))),
-            @ApiResponse(responseCode = "403", description = "Доступ запрещён", content = @Content(examples = @ExampleObject())),
+                    content = @Content(examples = @ExampleObject())),
+            @ApiResponse(responseCode = "403", description = "Доступ запрещён",
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "404", description = "Пользователь не найден",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 404,
-                                "error": "Not Found",
-                                "path": "/api/users"
-                            }"""))),
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "409", description = "Указанный email или номер телефона уже зарегистрированы",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 409,
-                                "error": "Conflict",
-                                "path": "/api/users"
-                            }"""))),
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 500,
-                                "error": "Internal Server Error",
-                                "path": "/api/users"
-                            }""")))
+                    content = @Content(examples = @ExampleObject()))
     })
     ResponseEntity<User> updateUser(@Valid @RequestBody UpdateUserRequest request);
 
@@ -151,6 +82,7 @@ public interface UserController {
      * @param uid Идентификатор пользователя.
      * @return {@link ResponseEntity} с пользователем или кодом ошибки, если пользователь не найден.
      */
+    @Hidden
     @GetMapping("/{uid}")
     @Operation(summary = "Получение пользователя по UID",
             description = "Возвращает информацию о пользователе по его уникальному идентификатору.")
@@ -160,21 +92,9 @@ public interface UserController {
             @ApiResponse(responseCode = "403", description = "Доступ запрещён",
                     content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "404", description = "Пользователь не найден",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 404,
-                                "error": "Not Found",
-                                "path": "/api/users/123e4567-e89b-12d3-a456-426614174000"
-                            }"""))),
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 500,
-                                "error": "Internal Server Error",
-                                "path": "/api/users/123e4567-e89b-12d3-a456-426614174000"
-                            }""")))
+                    content = @Content(examples = @ExampleObject()))
     })
     ResponseEntity<User> getUser(@Valid @PathVariable @NotNull UUID uid);
 
@@ -184,6 +104,7 @@ public interface UserController {
      * @param uid Идентификатор пользователя.
      * @return {@link ResponseEntity} с сообщением об успешном удалении пользователя.
      */
+    @Hidden
     @DeleteMapping("/{uid}")
     @Operation(summary = "Удаление пользователя", description = "Удаляет пользователя на основе его уникального идентификатора.")
     @ApiResponses(value = {
@@ -192,21 +113,9 @@ public interface UserController {
             @ApiResponse(responseCode = "403", description = "Доступ запрещён",
                     content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "404", description = "Пользователь не найден",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 404,
-                                "error": "Not Found",
-                                "path": "/api/users/123e4567-e89b-12d3-a456-426614174000"
-                            }"""))),
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 500,
-                                "error": "Internal Server Error",
-                                "path": "/api/users/123e4567-e89b-12d3-a456-426614174000"
-                            }""")))
+                    content = @Content(examples = @ExampleObject()))
     })
     ResponseEntity<String> deleteUser(@Valid @PathVariable @NotNull UUID uid);
 
@@ -223,21 +132,9 @@ public interface UserController {
             @ApiResponse(responseCode = "403", description = "Доступ запрещён",
                     content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "404", description = "Пользователь не найден",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 404,
-                                "error": "Not Found",
-                                "path": "/api/users/123e4567-e89b-12d3-a456-426614174000"
-                            }"""))),
+                    content = @Content(examples = @ExampleObject())),
             @ApiResponse(responseCode = "500", description = "Ошибка на сервере",
-                    content = @Content(examples = @ExampleObject(value = """
-                            {
-                                "timestamp": "2024-11-15T18:51:12.001+00:00",
-                                "status": 500,
-                                "error": "Internal Server Error",
-                                "path": "/api/users/123e4567-e89b-12d3-a456-426614174000"
-                            }""")))
+                    content = @Content(examples = @ExampleObject()))
     })
     ResponseEntity<String> deleteCurrentUser();
 }

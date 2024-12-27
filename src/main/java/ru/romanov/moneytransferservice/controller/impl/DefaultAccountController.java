@@ -51,8 +51,15 @@ public class DefaultAccountController implements AccountController {
     }
 
     @Override
-    public ResponseEntity<List<AccountResponse>> getAccountsByUserUid() {
-        var accounts = accountService.getAccountsByUserUid().stream().map(accountMapper::toResponse).toList();
+    public ResponseEntity<List<AccountResponse>> getAccountsByPhoneNumber(String phoneNumber) {
+        var accounts = accountService.getAccountsByPhoneNumber(phoneNumber).stream().map(accountMapper::toResponse).toList();
+
+        return ResponseEntity.status(accounts.isEmpty() ? 204 : 200).body(accounts);
+    }
+
+    @Override
+    public ResponseEntity<List<AccountResponse>> getAccountsByCurrentUser() {
+        var accounts = accountService.getAccountsByCurrentUser().stream().map(accountMapper::toResponse).toList();
         return ResponseEntity.status(accounts.isEmpty() ? 204 : 200).body(accounts);
     }
 
